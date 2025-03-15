@@ -37,7 +37,6 @@
     "scripts": {
         "build": "npm run clean && NODE_ENV=production node build.config.mjs",
         "clean": "rimraf dist",
-        "jest": "jest",
         "lint": "eslint && tsc --noEmit",
         "publish:beta": "npm publish --tag beta",
         "publish:next": "npm publish --tag next",
