@@ -58,7 +58,7 @@ export class MD5 extends Hasher {
         // Shortcuts
         const H = this._hash.words;
 
-        const M_offset_0 = M[offset + 0];
+        const M_offset_0 = M[offset]; // + 0
         const M_offset_1 = M[offset + 1];
         const M_offset_2 = M[offset + 2];
         const M_offset_3 = M[offset + 3];
