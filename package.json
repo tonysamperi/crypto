@@ -2,7 +2,7 @@
     "name": "@tonysamperi/crypto",
     "version": "1.0.0",
     "author": "Tony Samperi",
-    "description": "Modern Typescript/Javascript version of crypto-js",
+    "description": "Modern tree-shakeable TypeScript version of crypto-js",
     "type": "module",
     "typings": "./dist/types/index.d.cts",
     "main": "./dist/cjs/index.cjs",
