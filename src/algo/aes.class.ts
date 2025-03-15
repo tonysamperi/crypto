@@ -137,7 +137,7 @@ export class AES extends BlockCipher {
         }
 
         // Compute inv key schedule
-        const invKeySchedule: number[] = this._invKeySchedule = [];
+        this._invKeySchedule = [];
         for (let invKsRow = 0; invKsRow < ksRows; invKsRow++) {
             const ksRow = ksRows - invKsRow;
 
@@ -150,10 +150,10 @@ export class AES extends BlockCipher {
             }
 
             if (invKsRow < 4 || ksRow <= 4) {
-                invKeySchedule[invKsRow] = t;
+                this._invKeySchedule[invKsRow] = t;
             }
             else {
-                invKeySchedule[invKsRow] = INV_SUB_MIX_0[SBOX[t >>> 24]] ^ INV_SUB_MIX_1[SBOX[(t >>> 16) & 0xff]] ^
+                this._invKeySchedule[invKsRow] = INV_SUB_MIX_0[SBOX[t >>> 24]] ^ INV_SUB_MIX_1[SBOX[(t >>> 16) & 0xff]] ^
                     INV_SUB_MIX_2[SBOX[(t >>> 8) & 0xff]] ^ INV_SUB_MIX_3[SBOX[t & 0xff]];
             }
         }
