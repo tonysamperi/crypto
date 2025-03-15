@@ -3,7 +3,8 @@
         "src"
     ],
     "exclude": [
-        "test"
+        "test",
+        "src/crypto-js.ts"
     ],
     "compilerOptions": {
         "module": "CommonJS",

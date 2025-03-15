@@ -1,5 +1,5 @@
 import {MD5, Utf8, Hex, md5Helper} from "../../src";
-import cry from "../crypto-js.cjs";
+import cry from "../crypto-js.js";
 
 describe("MD5", () => {
 
