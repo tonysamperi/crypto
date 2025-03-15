@@ -1,5 +1,5 @@
 // import {Hex} from "../../src";
-import cry from "../crypto-js.cjs";
+import cry from "../crypto-js.js";
 
 describe("PBKDF2", () => {
 
