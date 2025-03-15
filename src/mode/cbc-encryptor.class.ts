@@ -1,7 +1,7 @@
 import {BlockCipherModeAlgorithm} from "./block-cipher-mode-algorithm.class.js";
 
 export class CBCEncryptor extends BlockCipherModeAlgorithm {
-    public _prevBlock: Array<number> | undefined;
+    public _prevBlock: number[] | undefined;
 
     /**
      * Processes the data block at offset.
@@ -13,7 +13,7 @@ export class CBCEncryptor extends BlockCipherModeAlgorithm {
      *
      *     mode.processBlock(data.words, offset);
      */
-    public processBlock(words: Array<number>, offset: number) {
+    public processBlock(words: number[], offset: number) {
         // Check if we have a blockSize
         if (this._cipher.cfg.blockSize === undefined) {
             throw new Error("missing blockSize in cipher config");
@@ -27,7 +27,7 @@ export class CBCEncryptor extends BlockCipherModeAlgorithm {
         this._prevBlock = words.slice(offset, offset + this._cipher.cfg.blockSize);
     }
 
-    public xorBlock(words: Array<number>, offset: number, blockSize: number) {
+    public xorBlock(words: number[], offset: number, blockSize: number) {
         // Choose mixing block
         let block;
         if (this._iv) {

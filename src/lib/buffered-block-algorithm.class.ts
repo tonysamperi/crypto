@@ -3,15 +3,13 @@ import {Utf8} from "../enc/utf8.class.js";
 import {BufferedBlockAlgorithmConfig} from "./buffered-block-algorithm-config.interface.js";
 
 export abstract class BufferedBlockAlgorithm {
-    public _minBufferSize = 0;
 
-    public _data: WordArray;
+    protected _minBufferSize = 0;
+    protected _data: WordArray;
+    protected _nDataBytes: number;
+    cfg: BufferedBlockAlgorithmConfig;
 
-    public _nDataBytes: number;
-
-    public cfg: BufferedBlockAlgorithmConfig;
-
-    abstract _doProcessBlock(wordArray: Array<number>, offset: number): void;
+    protected abstract _doProcessBlock(wordArray: number[], offset: number): void;
 
     constructor(cfg?: BufferedBlockAlgorithmConfig) {
         this.cfg = Object.assign({

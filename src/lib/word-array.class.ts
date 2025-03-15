@@ -1,7 +1,7 @@
 import {Hex} from "../enc/hex.class.js";
 
 export class WordArray {
-    words: Array<number>;
+    words: number[];
 
     sigBytes: number;
 
@@ -56,7 +56,7 @@ export class WordArray {
      *     let wordArray = new WordArray([0x00010203, 0x04050607]);
      *     let wordArray = new WordArray([0x00010203, 0x04050607], 6);
      */
-    constructor(words?: Array<number>, sigBytes?: number) {
+    constructor(words?: number[], sigBytes?: number) {
         this.words = words || [];
 
         if (sigBytes !== undefined) {

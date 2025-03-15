@@ -4,11 +4,11 @@ import {BlockCipherMode} from "./block-cipher-mode.class.js";
 export abstract class BlockCipherModeAlgorithm {
     public _cipher!: BlockCipher;
 
-    public _iv: Array<number> | undefined;
+    public _iv: number[] | undefined;
 
     public __creator: ((cipher: BlockCipher, iv: number[]) => BlockCipherMode) | undefined;
 
-    public constructor(cipher: BlockCipher, iv: Array<number>) {
+    public constructor(cipher: BlockCipher, iv: number[]) {
         this.init(cipher, iv);
     }
 
@@ -22,10 +22,10 @@ export abstract class BlockCipherModeAlgorithm {
      *
      *     var mode = CBC.Encryptor.create(cipher, iv.words);
      */
-    public init(cipher: BlockCipher, iv?: Array<number>) {
+    public init(cipher: BlockCipher, iv?: number[]) {
         this._cipher = cipher;
         this._iv = iv;
     }
 
-    public abstract processBlock(words: Array<number>, offset: number): void;
+    public abstract processBlock(words: number[], offset: number): void;
 }

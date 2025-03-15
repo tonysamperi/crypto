@@ -4,7 +4,7 @@ import cry from "../crypto-js.js";
 describe("MD5", () => {
 
     const _ctx = {
-        gcSeed: "Percassi1Gift!Card" + "9026000005688202",
+        gcSeed: "passkey" + "secret",
         pairs: [
             {value: "IronMan", hashed: "ef07e11ef83c219f307ae99191641528"},
             {value: "CaptainAmerica", hashed: "c207e787791638f72bcb2dea2ca3ae52"},
@@ -14,7 +14,7 @@ describe("MD5", () => {
         ]
     };
 
-    it("should generate md5 correctly", () => {
+    it("should generate md5", () => {
         for (const {value, hashed} of _ctx.pairs) {
             const cryptoJsMd5 = cry.algo.MD5.create().update(Utf8.parse(value)).finalize().toString();
             const tonyMd5 = new MD5().update(Utf8.parse(value)).finalize().toString();
@@ -26,12 +26,12 @@ describe("MD5", () => {
         }
     });
 
-    it("should generate md5 hmac correctly", () => {
+    it("should generate md5 hmac", () => {
         const cryptoJsMd5 = cry.algo.MD5.create().update(Utf8.parse(_ctx.gcSeed)).finalize().toString(Hex).substring(0, 5).toUpperCase();
         const tonyMd5 = new MD5().update(Utf8.parse(_ctx.gcSeed)).finalize().toString(Hex).substring(0, 5).toUpperCase();
         const tonyMd5Helper = md5Helper(Utf8.parse(_ctx.gcSeed)).toString(Hex).substring(0, 5).toUpperCase();
 
-        expect(tonyMd5Helper).toEqual("C6638");
+        expect(tonyMd5Helper).toEqual("8BE3C");
         expect(tonyMd5Helper).toEqual(tonyMd5);
         expect(tonyMd5Helper).toEqual(cryptoJsMd5);
     });

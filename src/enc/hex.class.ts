@@ -14,7 +14,7 @@ export class Hex {
      */
     public static stringify(wordArray: WordArray): string {
         // Convert
-        const hexChars: Array<string> = [];
+        const hexChars: string[] = [];
         for (let i = 0; i < wordArray.sigBytes; i++) {
             const bite = (wordArray.words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
             hexChars.push((bite >>> 4).toString(16));
@@ -40,7 +40,7 @@ export class Hex {
         const hexStrLength = hexStr.length;
 
         // Convert
-        const words: Array<number> = [];
+        const words: number[] = [];
         for (let i = 0; i < hexStrLength; i += 2) {
             words[i >>> 3] |= parseInt(hexStr.substr(i, 2), 16) << (24 - (i % 8) * 4);
         }

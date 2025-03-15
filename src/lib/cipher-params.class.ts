@@ -1,7 +1,7 @@
 import {WordArray} from "./word-array.class.js";
 import {Cipher} from "./cipher.class.js";
 import {BlockCipherMode} from "../mode/block-cipher-mode.class.js";
-import {Padding} from "../pad/padding.class.js";
+import {Padding} from "../pad/padding.model.js";
 import {Formatter} from "../format/formatter.interface.js";
 
 export class CipherParams {

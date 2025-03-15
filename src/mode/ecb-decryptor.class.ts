@@ -11,7 +11,7 @@ export class ECBDecryptor extends BlockCipherModeAlgorithm {
      *
      *     mode.processBlock(data.words, offset);
      */
-    public processBlock(words: Array<number>, offset: number) {
+    public processBlock(words: number[], offset: number) {
         this._cipher.decryptBlock(words, offset);
     }
 }

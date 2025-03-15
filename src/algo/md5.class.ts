@@ -2,7 +2,7 @@ import {Hasher} from "../lib/hasher.class.js";
 import {WordArray} from "../lib/word-array.class.js";
 
 // Constants table
-const T: Array<number> = [];
+const T: number[] = [];
 
 // Compute constants
 for (let i = 0; i < 64; i++) {
@@ -42,7 +42,7 @@ export class MD5 extends Hasher {
         ]);
     }
 
-    public _doProcessBlock(M: Array<number>, offset: number) {
+    _doProcessBlock(M: number[], offset: number) {
         // Swap endian
         for (let i = 0; i < 16; i++) {
             // Shortcuts

@@ -2,9 +2,15 @@ import {SHA256} from "../algo/sha256.class.js";
 import {WordArray} from "../lib/word-array.class.js";
 import {HMAC} from "../lib/hmac.class.js";
 import {HasherConstructor} from "../lib/hasher-constructor.type.js";
-import {PBKDF2Config} from "./pbkdf2-config.interface.js";
+import {AbstractKDF} from "./kdf.model";
 
-export class PBKDF2 {
+export interface PBKDF2Config {
+    keySize: number,
+    hasher: HasherConstructor,
+    iterations: number
+}
+
+export class PBKDF2 implements AbstractKDF {
     cfg: PBKDF2Config;
 
     constructor(cfg: Partial<PBKDF2Config>) {

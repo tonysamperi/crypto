@@ -1,9 +1,10 @@
 import {WordArray} from "../lib/word-array.class.js";
+import {AbstractEncoder} from "./encoder.model.js";
 
-export class Base64 {
+export class Base64 implements AbstractEncoder {
     public static _map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-    public static _reverseMap: Array<number> | undefined = undefined;
+    public static _reverseMap: number[] | undefined = undefined;
 
     /**
      * Converts a word array to a Base64 string.
@@ -80,8 +81,8 @@ export class Base64 {
         return this.parseLoop(base64Str, base64StrLength, this._reverseMap);
     }
 
-    public static parseLoop(base64Str: string, base64StrLength: number, reverseMap: Array<number>): WordArray {
-        const words: Array<number> = [];
+    public static parseLoop(base64Str: string, base64StrLength: number, reverseMap: number[]): WordArray {
+        const words: number[] = [];
         let nBytes = 0;
         for (let i = 0; i < base64StrLength; i++) {
             if (i % 4) {

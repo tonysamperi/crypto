@@ -2,8 +2,8 @@ import {Hasher} from "../lib/hasher.class.js";
 import {WordArray} from "../lib/word-array.class.js";
 
 // Initialization and round constants tables
-const H: Array<number> = [];
-const K: Array<number> = [];
+const H: number[] = [];
+const K: number[] = [];
 
 // Compute constants
 (function () {
@@ -39,10 +39,10 @@ const K: Array<number> = [];
 }());
 
 // Reusable object
-const W: Array<number> = [];
+const W: number[] = [];
 
 export class SHA256 extends Hasher {
-    private _hash!: WordArray;
+    private _hash: WordArray;
 
     constructor() {
         super();
@@ -55,7 +55,7 @@ export class SHA256 extends Hasher {
         this._hash = new WordArray(H.slice(0));
     }
 
-    _doProcessBlock(M: Array<number>, offset: number) {
+    _doProcessBlock(M: number[], offset: number) {
         // Shortcut
         const Hl = this._hash.words;
 

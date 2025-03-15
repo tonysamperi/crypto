@@ -4,6 +4,7 @@ import cry from "../crypto-js.js";
 describe("SHA256", () => {
 
     const _ctx = {
+        // Pairs calculated with crypto => createHash('sha256').update(value).digest('hex')
         pairs: [
             {value: "IronMan", hashed: "78b13c80d8fdacdb876bdc14d57b9d8419830b004bf06aef2662c42bfc9b6a4e"},
             {value: "CaptainAmerica", hashed: "d98b594db81b9917a385c89d39382728061201e4634c9b5d67e372d4dc93c98b"},
@@ -13,7 +14,7 @@ describe("SHA256", () => {
         ]
     };
 
-    it("should generate sha256 correctly", () => {
+    it("should generate sha256", () => {
         for (const {value, hashed} of _ctx.pairs) {
             const cryptoJs256 = cry.algo.SHA256.create().update(Utf8.parse(value)).finalize().toString();
             const tonySha256 = new SHA256().update(Utf8.parse(value)).finalize().toString();

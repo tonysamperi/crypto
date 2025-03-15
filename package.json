@@ -1,6 +1,6 @@
 {
     "name": "@tonysamperi/crypto",
-    "version": "1.0.0-beta.0",
+    "version": "1.0.0",
     "author": "Tony Samperi",
     "description": "Modern Typescript/Javascript version of crypto-js",
     "type": "module",
@@ -46,9 +46,11 @@
     "homepage": "https://tonysamperi.github.io/crypto/",
     "license": "MIT",
     "keywords": [
-        "crypto",
+        "crypto-js",
         "typescript",
-        "sync-crypto"
+        "sync-crypto",
+        "crypto-ts",
+        "crypto"
     ],
     "repository": {
         "type": "git",

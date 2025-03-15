@@ -1,4 +1,4 @@
-import {Hex, PBKDF2, SHA1, aesHelper, Utf8, CBC, PKCS7} from "../../src";
+import {Hex, PBKDF2, SHA1, aesHelper, Utf8, CBC, PKCS7, Encoder} from "../../src";
 import cry from "../crypto-js.js";
 
 describe("AES_MC", () => {
@@ -17,7 +17,7 @@ describe("AES_MC", () => {
         tonyHelper: aesHelperBuilder(aesHelper, Hex, CBC, PKCS7, Utf8, SHA1, PBKDF2.execute)
     };
 
-    it("should generate AES correctly", () => {
+    it("should generate AES", () => {
         const item = _ctx.pairs[0];
         const cryptoJsKey = _ctx.cryHelper.encryptAES(item.email, _ctx.aesConfig.password, _ctx.aesConfig.salt, _ctx.aesConfig.initVector);
         const tonyKey = _ctx.tonyHelper.encryptAES(item.email, _ctx.aesConfig.password, _ctx.aesConfig.salt, _ctx.aesConfig.initVector);
@@ -30,12 +30,14 @@ describe("AES_MC", () => {
 
 //
 
+
+
 function aesHelperBuilder(
     AES: { decrypt: (...args: any[]) => any, encrypt: (...args: any[]) => any },
-    Hex: { parse: (key: any) => any },
+    Hex: Encoder,
     CBC: any,
     Pkcs7: any,
-    Utf8: any,
+    Utf8: Encoder,
     SHA1: any,
     PBKDF2: any
 ) {
@@ -46,8 +48,7 @@ function aesHelperBuilder(
             iterations: 1000,
             hasher: SHA1
         });
-
-        console.info("BUILT KEY", builtKey.toString(Hex));
+        // console.info("BUILT KEY", builtKey.toString(Hex));
 
         return builtKey;
     }

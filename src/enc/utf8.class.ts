@@ -1,7 +1,8 @@
 import {WordArray} from "../lib/word-array.class.js";
 import {Latin1} from "./latin1.class.js";
+import {AbstractEncoder} from "./encoder.model";
 
-export class Utf8 {
+export class Utf8 implements AbstractEncoder {
     /**
      * Converts a word array to a UTF-8 string.
      *
@@ -13,7 +14,7 @@ export class Utf8 {
      *
      *     let utf8String = Utf8.stringify(wordArray);
      */
-    public static stringify(wordArray: WordArray): string {
+    static stringify(wordArray: WordArray): string {
         try {
             return decodeURIComponent(escape(Latin1.stringify(wordArray)));
         }
@@ -33,7 +34,7 @@ export class Utf8 {
      *
      *     let wordArray = Utf8.parse(utf8String);
      */
-    public static parse(utf8Str: string): WordArray {
+    static parse(utf8Str: string): WordArray {
         return Latin1.parse(unescape(encodeURIComponent(utf8Str)));
     }
 }

@@ -11,7 +11,7 @@ describe("PBKDF2", () => {
         expectedKey: "665c637818032c253433b35755c6b9d035c3c57179c346bf7a15e36f44e33983"
     };
 
-    it("should generate PKBDF2 correctly", () => {
+    it("should generate PKBDF2", () => {
         const cryptoJsKey = cry.PBKDF2(_ctx.aesConfig.password, cry.enc.Hex.parse(_ctx.aesConfig.salt), {
             keySize: 256 / 32,
             iterations: 1000,

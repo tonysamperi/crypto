@@ -3,16 +3,16 @@ import {WordArray} from "../lib/word-array.class.js";
 import {BufferedBlockAlgorithmConfig} from "../lib/buffered-block-algorithm-config.interface.js";
 
 // Define lookup tables
-const SBOX: Array<number> = [];
-const INV_SBOX: Array<number> = [];
-const SUB_MIX_0: Array<number> = [];
-const SUB_MIX_1: Array<number> = [];
-const SUB_MIX_2: Array<number> = [];
-const SUB_MIX_3: Array<number> = [];
-const INV_SUB_MIX_0: Array<number> = [];
-const INV_SUB_MIX_1: Array<number> = [];
-const INV_SUB_MIX_2: Array<number> = [];
-const INV_SUB_MIX_3: Array<number> = [];
+const SBOX: number[] = [];
+const INV_SBOX: number[] = [];
+const SUB_MIX_0: number[] = [];
+const SUB_MIX_1: number[] = [];
+const SUB_MIX_2: number[] = [];
+const SUB_MIX_3: number[] = [];
+const INV_SUB_MIX_0: number[] = [];
+const INV_SUB_MIX_1: number[] = [];
+const INV_SUB_MIX_2: number[] = [];
+const INV_SUB_MIX_3: number[] = [];
 
 // Compute lookup tables
 (function () {
@@ -80,9 +80,9 @@ export class AES extends BlockCipher {
 
     _keyPriorReset!: WordArray;
 
-    _keySchedule!: Array<number>;
+    _keySchedule!: number[];
 
-    _invKeySchedule!: Array<number>;
+    _invKeySchedule!: number[];
 
     constructor(xformMode: number, key: WordArray, cfg?: BufferedBlockAlgorithmConfig) {
         super(xformMode, key, cfg);
@@ -109,7 +109,7 @@ export class AES extends BlockCipher {
         const ksRows = (nRounds + 1) * 4;
 
         // Compute key schedule
-        const keySchedule: Array<number> = this._keySchedule = [];
+        const keySchedule: number[] = this._keySchedule = [];
         for (let ksRow = 0; ksRow < ksRows; ksRow++) {
             if (ksRow < keySize) {
                 keySchedule[ksRow] = keyWords[ksRow];
@@ -137,7 +137,7 @@ export class AES extends BlockCipher {
         }
 
         // Compute inv key schedule
-        const invKeySchedule: Array<number> = this._invKeySchedule = [];
+        const invKeySchedule: number[] = this._invKeySchedule = [];
         for (let invKsRow = 0; invKsRow < ksRows; invKsRow++) {
             const ksRow = ksRows - invKsRow;
 
@@ -159,11 +159,11 @@ export class AES extends BlockCipher {
         }
     }
 
-    encryptBlock(M: Array<number>, offset: number) {
+    encryptBlock(M: number[], offset: number) {
         this._doCryptBlock(M, offset, this._keySchedule, SUB_MIX_0, SUB_MIX_1, SUB_MIX_2, SUB_MIX_3, SBOX);
     }
 
-    decryptBlock(M: Array<number>, offset: number) {
+    decryptBlock(M: number[], offset: number) {
         // Swap 2nd and 4th rows
         let t = M[offset + 1];
         M[offset + 1] = M[offset + 3];
@@ -178,14 +178,14 @@ export class AES extends BlockCipher {
     }
 
     _doCryptBlock(
-        M: Array<number>,
+        M: number[],
         offset: number,
-        keySchedule: Array<number>,
-        sub_mix_0: Array<number>,
-        sub_mix_1: Array<number>,
-        sub_mix_2: Array<number>,
-        sub_mix_3: Array<number>,
-        sbox: Array<number>
+        keySchedule: number[],
+        sub_mix_0: number[],
+        sub_mix_1: number[],
+        sub_mix_2: number[],
+        sub_mix_3: number[],
+        sbox: number[]
     ) {
         // Get input, add round key
         let s0 = M[offset] ^ keySchedule[0];

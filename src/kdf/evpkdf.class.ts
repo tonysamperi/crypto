@@ -1,21 +1,22 @@
-import { WordArray } from '../lib/word-array.class.js';
-import { Hasher } from '../lib/hasher.class.js';
-import { MD5 } from './md5.class.js';
+import {WordArray} from "../lib/word-array.class.js";
+import {Hasher} from "../lib/hasher.class.js";
+import {MD5} from "../algo/md5.class.js";
+import {AbstractKDF} from "./kdf.model.js";
 
-export interface OptionalEvpKDFConfig {
+export interface OptionalEVPKDFConfig {
     keySize?: number;
     hasher?: typeof Hasher;
     iterations?: number;
 }
 
-export interface EvpKDFConfig extends OptionalEvpKDFConfig {
+export interface EVPKDFConfig extends OptionalEVPKDFConfig {
     keySize: number;
     hasher: typeof Hasher;
     iterations: number;
 }
 
-export class EvpKDF {
-    public cfg: EvpKDFConfig;
+export class EVPKDF implements AbstractKDF {
+    cfg: EVPKDFConfig;
 
     /**
      * Initializes a newly created key derivation function.
@@ -28,12 +29,16 @@ export class EvpKDF {
      *     let kdf = EvpKDF.create({ keySize: 8 });
      *     let kdf = EvpKDF.create({ keySize: 8, iterations: 1000 });
      */
-    constructor(cfg?: OptionalEvpKDFConfig) {
+    constructor(cfg?: OptionalEVPKDFConfig) {
         this.cfg = Object.assign({
             keySize: 128 / 32,
             hasher: MD5,
             iterations: 1
         }, cfg);
+    }
+
+    static execute(password: WordArray | string, salt: WordArray | string, cfg?: OptionalEVPKDFConfig): WordArray {
+        return new EVPKDF(cfg).compute(password, salt);
     }
 
     /**
@@ -50,22 +55,22 @@ export class EvpKDF {
      */
     compute(password: WordArray | string, salt: WordArray | string): WordArray {
         // Init hasher
-        const hasher = new (<any> this.cfg.hasher)();
+        const hasher = new (<any>this.cfg.hasher)();
 
         // Initial values
         const derivedKey = new WordArray();
 
         // Generate key
         let block;
-        while(derivedKey.words.length < this.cfg.keySize) {
-            if(block) {
+        while (derivedKey.words.length < this.cfg.keySize) {
+            if (block) {
                 hasher.update(block);
             }
             block = hasher.update(password).finalize(salt);
             hasher.reset();
 
             // Iterations
-            for(let i = 1; i < this.cfg.iterations; i++) {
+            for (let i = 1; i < this.cfg.iterations; i++) {
                 block = hasher.finalize(block);
                 hasher.reset();
             }

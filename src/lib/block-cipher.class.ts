@@ -46,7 +46,7 @@ export abstract class BlockCipher extends Cipher {
         }
     }
 
-    _doProcessBlock(words: Array<number>, offset: number) {
+    _doProcessBlock(words: number[], offset: number) {
         this._mode.processBlock(words, offset);
     }
 
@@ -81,7 +81,7 @@ export abstract class BlockCipher extends Cipher {
         return finalProcessedBlocks;
     }
 
-    public abstract encryptBlock(M: Array<number>, offset: number): void;
+    public abstract encryptBlock(M: number[], offset: number): void;
 
-    public abstract decryptBlock(M: Array<number>, offset: number): void;
+    public abstract decryptBlock(M: number[], offset: number): void;
 }

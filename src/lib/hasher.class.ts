@@ -47,7 +47,12 @@ export abstract class Hasher extends BufferedBlockAlgorithm {
         return helper;
     }
 
-    abstract _doFinalize(): WordArray;
+    static clone(): Hasher {
+        // @ts-expect-error this will work on extended classes
+        return new this(this.cfg);
+    }
+
+    protected abstract _doFinalize(): WordArray;
 
     /**
      * Finalizes the hash computation.

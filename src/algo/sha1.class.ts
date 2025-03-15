@@ -13,7 +13,7 @@ export class SHA1 extends Hasher {
         this._hash = new WordArray(H.slice(0));
     }
 
-    public _doProcessBlock(M: number[], offset: number): void {
+    _doProcessBlock(M: number[], offset: number): void {
         const Hl = this._hash.words;
 
         let a = Hl[0];

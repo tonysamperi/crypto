@@ -1,6 +1,7 @@
 import {WordArray} from "../lib/word-array.class.js";
+import {AbstractPadding} from "./padding.model";
 
-export class NoPadding {
+export class NoPadding implements AbstractPadding {
     /**
      * Doesn't pad the data provided.
      *
@@ -11,7 +12,7 @@ export class NoPadding {
      *
      *     NoPadding.pad(wordArray, 4);
      */
-    public static pad(_data_: WordArray, _blockSize_: number): void {
+    static pad(_data_: WordArray, _blockSize_: number): void {
     }
 
     /**
@@ -23,6 +24,6 @@ export class NoPadding {
      *
      *     NoPadding.unpad(wordArray);
      */
-    public static unpad(_data_: WordArray): void {
+    static unpad(_data_: WordArray): void {
     }
 }
