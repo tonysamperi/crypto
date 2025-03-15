@@ -1,7 +1,7 @@
 import {BufferedBlockAlgorithm} from "./buffered-block-algorithm.class.js";
 import {BufferedBlockAlgorithmConfig} from "./buffered-block-algorithm-config.interface.js";
 import {WordArray} from "./word-array.class.js";
-import {HasherConstructor} from "./hasher-constructor.type";
+import {HasherConstructor} from "./hasher-constructor.type.js";
 
 export abstract class Hasher extends BufferedBlockAlgorithm {
 
