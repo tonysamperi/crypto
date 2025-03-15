@@ -1,0 +1,14 @@
+{
+    "extends": [
+        "./tsconfig.json"
+    ],
+    "include": [
+        "test/crypto-js.ts"
+    ],
+    "compilerOptions": {
+        "module": "CommonJS",
+        "target": "esnext",
+        "moduleResolution": "node",
+        "outDir": "dist/crypto"
+    }
+}
