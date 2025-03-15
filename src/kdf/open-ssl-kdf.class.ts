@@ -1,7 +1,7 @@
 import {WordArray} from "../lib/word-array.class.js";
 import {CipherParams} from "../lib/cipher-params.class.js";
 import {EVPKDF} from "./evpkdf.class.js";
-import {AbstractKDF} from "./kdf.model";
+import {AbstractKDF} from "./kdf.model.js";
 
 export class OpenSSLKdf implements AbstractKDF {
     /**

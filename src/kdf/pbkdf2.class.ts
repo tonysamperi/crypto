@@ -2,7 +2,7 @@ import {SHA256} from "../algo/sha256.class.js";
 import {WordArray} from "../lib/word-array.class.js";
 import {HMAC} from "../lib/hmac.class.js";
 import {HasherConstructor} from "../lib/hasher-constructor.type.js";
-import {AbstractKDF} from "./kdf.model";
+import {AbstractKDF} from "./kdf.model.js";
 
 export interface PBKDF2Config {
     keySize: number,

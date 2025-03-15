@@ -1,6 +1,6 @@
 import {WordArray} from "../lib/word-array.class.js";
 import {Latin1} from "./latin1.class.js";
-import {AbstractEncoder} from "./encoder.model";
+import {AbstractEncoder} from "./encoder.model.js";
 
 export class Utf8 implements AbstractEncoder {
     /**

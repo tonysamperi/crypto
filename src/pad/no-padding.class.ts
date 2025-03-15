@@ -1,5 +1,5 @@
 import {WordArray} from "../lib/word-array.class.js";
-import {AbstractPadding} from "./padding.model";
+import {AbstractPadding} from "./padding.model.js";
 
 export class NoPadding implements AbstractPadding {
     /**
