@@ -1,6 +1,6 @@
 {
     "name": "@tonysamperi/crypto",
-    "version": "1.0.0-beta.0",
+    "version": "1.0.0",
     "author": "Tony Samperi",
     "description": "Modern Typescript/Javascript version of crypto-js",
     "type": "module",
