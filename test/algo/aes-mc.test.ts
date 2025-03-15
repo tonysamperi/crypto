@@ -48,7 +48,7 @@ function aesHelperBuilder(
             iterations: 1000,
             hasher: SHA1
         });
-        // console.info("BUILT KEY", builtKey.toString(Hex));
+        console.debug("BUILT KEY", builtKey.toString(Hex));
 
         return builtKey;
     }
