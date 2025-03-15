@@ -1,28 +1,30 @@
-// import {Hex} from "../../src";
+import {Hex, PBKDF2, SHA1} from "../../src";
 import cry from "../crypto-js.js";
 
 describe("PBKDF2", () => {
 
     const _ctx = {
-        expectedKey: "cc5d38da46c86a2d2f548d2e51651a1ecdb0a92230baed12a2b7d274b6fdbe92",
+        expectedKey: "665c637818032c253433b35755c6b9d035c3c57179c346bf7a15e36f44e33983",
         aesConfig: {
-            password: 'p?IG~t1~85TN*2?z',
-            initVector: 'f7313582bf82685ab148f03fdac29d54',
-            salt: 'b19d311589244b27',
+            password: 'KY93In2I$5cme7EU',
+            initVector: '32f2ee4027f8b2a032f2ee4027f8b2a0',
+            salt: 'e0cf1267f564b362',
         }
     };
 
     it("should generate sha256 correctly", () => {
-        const cryptoJsKey  = cry.PBKDF2(_ctx.aesConfig.password, cry.enc.Hex.parse(_ctx.aesConfig.salt), {
+        const cryptoJsKey = cry.PBKDF2(_ctx.aesConfig.password, cry.enc.Hex.parse(_ctx.aesConfig.salt), {
             keySize: 256 / 32,
             iterations: 1000,
-            hasher: cry.algo.SHA1,
-        });
-        // const tonyKey = new SHA256().update(Utf8.parse(value)).finalize().toString();
+            hasher: cry.algo.SHA1
+        }).toString(cry.enc.Hex);
+        const tonyKey = PBKDF2.execute(_ctx.aesConfig.password, Hex.parse(_ctx.aesConfig.salt), {
+            keySize: 256 / 32,
+            iterations: 1000,
+            hasher: SHA1
+        }).toString(Hex);
 
         expect(cryptoJsKey).toEqual(_ctx.expectedKey);
-        // expect(tonySha256Helper).toEqual(tonySha256);
-        // expect(tonySha256Helper).toEqual(cryptoJsKey);
-
+        expect(tonyKey).toEqual(_ctx.expectedKey);
     });
 });

@@ -1,5 +1,5 @@
 import {Utf8, sha256Helper, SHA256} from "../../src";
-import cry from "../crypto-js.cjs";
+import cry from "../crypto-js.js";
 
 describe("SHA256", () => {
 

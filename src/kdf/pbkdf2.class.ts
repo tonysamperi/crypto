@@ -1,11 +1,13 @@
 import {SHA256} from "../algo/sha256.class.js";
 import {WordArray} from "../lib/word-array.class.js";
-import {HMAC} from "../lib/hmac.class";
+import {HMAC} from "../lib/hmac.class.js";
+import {HasherConstructor} from "../lib/hasher-constructor.type.js";
+import {PBKDF2Config} from "./pbkdf2-config.interface.js";
 
 export class PBKDF2 {
-    cfg: { keySize: number, hasher: typeof SHA256, iterations: number };
+    cfg: PBKDF2Config;
 
-    constructor(cfg: { keySize?: number, hasher?: typeof SHA256, iterations?: number }) {
+    constructor(cfg: Partial<PBKDF2Config>) {
         this.cfg = {
             keySize: 128 / 32,
             hasher: SHA256,
@@ -14,9 +16,9 @@ export class PBKDF2 {
         };
     }
 
-    static create(password: WordArray | string, salt: WordArray | string, cfg?: {
+    static execute(password: WordArray | string, salt: WordArray | string, cfg?: {
         keySize?: number,
-        hasher?: typeof SHA256,
+        hasher?: HasherConstructor,
         iterations?: number
     }): WordArray {
         return new PBKDF2(cfg).compute(password, salt);
@@ -24,7 +26,7 @@ export class PBKDF2 {
 
     compute(password: WordArray | string, salt: WordArray | string): WordArray {
         const cfg = this.cfg;
-        const hmac = new HMAC().init(cfg.hasher, password);
+        const hmac = new HMAC(cfg.hasher, password);
         const derivedKey = new WordArray();
         const blockIndex = new WordArray([1]);
         const derivedKeyWords = derivedKey.words;

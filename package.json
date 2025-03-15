@@ -55,11 +55,9 @@
         "url": "git+https://github.com/tonysamperi/crypto.git"
     },
     "devDependencies": {
-        "@types/crypto-js": "^4",
         "@types/jest": "^29.5.4",
         "@typescript-eslint/eslint-plugin": "^6.4.1",
         "@typescript-eslint/parser": "^6.4.1",
-        "crypto-js": "^4.2.0",
         "esbuild": "^0.25.1",
         "eslint": "^9.22.0",
         "eslint-plugin-import": "^2.31.0",
@@ -69,6 +67,10 @@
         "ts-node": "^10.9.2",
         "tslib": "^2.0.0",
         "typescript": "~5.3.0"
+    },
+    "peerDependencies": {
+        "@types/crypto-js": "^4",
+        "crypto-js": "^4.2.0"
     },
     "packageManager": "yarn@4.7.0"
 }

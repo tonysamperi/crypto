@@ -42,16 +42,20 @@ const K: Array<number> = [];
 const W: Array<number> = [];
 
 export class SHA256 extends Hasher {
-    public _hash!: WordArray;
+    private _hash!: WordArray;
 
-    public reset() {
+    constructor() {
+        super();
+    }
+
+    reset() {
         // reset core values
         super.reset();
 
         this._hash = new WordArray(H.slice(0));
     }
 
-    public _doProcessBlock(M: Array<number>, offset: number) {
+    _doProcessBlock(M: Array<number>, offset: number) {
         // Shortcut
         const Hl = this._hash.words;
 
@@ -114,7 +118,7 @@ export class SHA256 extends Hasher {
         Hl[7] = (Hl[7] + h) | 0;
     }
 
-    public _doFinalize(): WordArray {
+    _doFinalize(): WordArray {
         const nBitsTotal = this._nDataBytes * 8;
         const nBitsLeft = this._data.sigBytes * 8;
 
