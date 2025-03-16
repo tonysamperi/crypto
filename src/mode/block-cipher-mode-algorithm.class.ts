@@ -2,15 +2,18 @@ import {BlockCipher} from "../lib/block-cipher.class.js";
 import {BlockCipherMode} from "./block-cipher-mode.class.js";
 
 export abstract class BlockCipherModeAlgorithm {
-    public _cipher!: BlockCipher;
 
-    public _iv: number[] | undefined;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    __creator: ((cipher: BlockCipher, iv: number[]) => BlockCipherMode) | undefined;
 
-    public __creator: ((cipher: BlockCipher, iv: number[]) => BlockCipherMode) | undefined;
+    protected _cipher!: BlockCipher;
+    protected _iv: number[] | undefined;
 
-    public constructor(cipher: BlockCipher, iv: number[]) {
+    constructor(cipher: BlockCipher, iv: number[]) {
         this.init(cipher, iv);
     }
+
+    abstract processBlock(words: number[], offset: number): void;
 
     /**
      * Initializes a newly created mode.
@@ -22,10 +25,8 @@ export abstract class BlockCipherModeAlgorithm {
      *
      *     var mode = CBC.Encryptor.create(cipher, iv.words);
      */
-    public init(cipher: BlockCipher, iv?: number[]) {
+    init(cipher: BlockCipher, iv?: number[]) {
         this._cipher = cipher;
         this._iv = iv;
     }
-
-    public abstract processBlock(words: number[], offset: number): void;
 }

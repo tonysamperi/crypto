@@ -1,4 +1,4 @@
-import {BlockCipherModeAlgorithm} from "./block-cipher-mode-algorithm.class.js";
+import {BlockCipherModeAlgorithm} from "../block-cipher-mode-algorithm.class.js";
 
 export class ECBEncryptor extends BlockCipherModeAlgorithm {
     /**

@@ -10,14 +10,14 @@ for (let i = 0; i < 64; i++) {
 }
 
 export class MD5 extends Hasher {
-    public _hash!: WordArray;
+    _hash!: WordArray;
 
-    public static FF(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
+    static FF(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
         const n = a + ((b & c) | (~b & d)) + x + t;
         return ((n << s) | (n >>> (32 - s))) + b;
     }
 
-    public static GG(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
+    static GG(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
         const n = a + ((b & d) | (c & ~d)) + x + t;
         return ((n << s) | (n >>> (32 - s))) + b;
     }

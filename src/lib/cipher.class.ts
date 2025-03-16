@@ -6,72 +6,59 @@ import {BufferedBlockAlgorithmConfig} from "./buffered-block-algorithm-config.in
 import {CipherParams} from "./cipher-params.class.js";
 
 export abstract class Cipher extends BufferedBlockAlgorithm {
-    /**
-     * A constant representing encryption mode.
-     */
-    public static _ENC_XFORM_MODE = 1;
-
-    /**
-     * A constant representing decryption mode.
-     */
-    public static _DEC_XFORM_MODE = 2;
-
-    /**
-     * This cipher's key size. Default: 4 (128 bits / 32 Bits)
-     */
-    public static keySize = 4;
 
     /**
      * This cipher's IV size. Default: 4 (128 bits / 32 Bits)
      */
-    public static ivSize = 4;
+    static ivSize = 4;
 
     /**
-     * Either the encryption or decryption transformation mode constant.
+     * This cipher's key size. Default: 4 (128 bits / 32 Bits)
      */
-    public _xformMode: number;
+    static keySize = 4;
+
+    /**
+     * A constant representing decryption mode.
+     */
+    protected static readonly _DEC_XFORM_MODE = 2;
+    /**
+     * A constant representing encryption mode.
+     */
+    protected static readonly _ENC_XFORM_MODE = 1;
 
     /**
      * The key.
      */
-    public _key: WordArray;
+    protected _key: WordArray;
 
     /**
-     * Creates this cipher in encryption mode.
+     * Either the encryption or decryption transformation mode constant.
+     */
+    protected _xformMode: number;
+
+    /**
+     * Initializes a newly created cipher.
      *
+     * @param xformMode Either the encryption or decryption transormation mode constant.
      * @param key The key.
      * @param cfg (Optional) The configuration options to use for this operation.
      *
-     * @return A cipher instance.
-     *
      * @example
      *
-     *     let cipher = AES.createEncryptor(keyWordArray, { iv: ivWordArray });
+     *     let cipher = AES.create(AES._ENC_XFORM_MODE, keyWordArray, { iv: ivWordArray });
      */
-    public static createEncryptor(key: WordArray | string, cfg?: BufferedBlockAlgorithmConfig): Cipher {
-        // workaround for typescript not being able to create a abstract creator function directly
-        const thisClass: any = this;
+    constructor(xformMode: number, key: WordArray, cfg?: BufferedBlockAlgorithmConfig) {
+        // Apply config defaults
+        super(Object.assign({
+            blockSize: 1
+        }, cfg));
 
-        return new thisClass(this._ENC_XFORM_MODE, key, cfg);
-    }
+        // Store transform mode and key
+        this._xformMode = xformMode;
+        this._key = key;
 
-    /**
-     * Creates this cipher in decryption mode.
-     *
-     * @param key The key.
-     * @param cfg (Optional) The configuration options to use for this operation.
-     *
-     * @return A cipher instance.
-     *
-     * @example
-     *
-     *     let cipher = AES.createDecryptor(keyWordArray, { iv: ivWordArray });
-     */
-    public static createDecryptor(key: WordArray | string, cfg?: BufferedBlockAlgorithmConfig): Cipher {
-        // workaround for typescript not being able to create a abstract creator function directly
-        const thisClass: any = this;
-
-        return new thisClass(this._DEC_XFORM_MODE, key, cfg);
+        // Set initial values
+        this.reset();
     }
 
     /**
@@ -83,9 +70,10 @@ export abstract class Cipher extends BufferedBlockAlgorithm {
      *
      * @example
      *
-     *     let AES = Cipher._createHelper(AESAlgorithm);
+     *     const AES = Cipher._createHelper(AESAlgorithm);
      */
-    public static _createHelper(cipher: typeof Cipher) {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    static _createHelper(cipher: typeof Cipher) {
         function encrypt(message: WordArray | string, key: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) {
             if (typeof key === "string") {
                 return PasswordBasedCipher.encrypt(cipher, message, key, cfg);
@@ -111,48 +99,43 @@ export abstract class Cipher extends BufferedBlockAlgorithm {
     }
 
     /**
-     * Initializes a newly created cipher.
+     * Creates this cipher in decryption mode.
      *
-     * @param xformMode Either the encryption or decryption transormation mode constant.
      * @param key The key.
      * @param cfg (Optional) The configuration options to use for this operation.
      *
+     * @return A cipher instance.
+     *
      * @example
      *
-     *     let cipher = AES.create(AES._ENC_XFORM_MODE, keyWordArray, { iv: ivWordArray });
+     *     let cipher = AES.createDecryptor(keyWordArray, { iv: ivWordArray });
      */
-    public constructor(xformMode: number, key: WordArray, cfg?: BufferedBlockAlgorithmConfig) {
-        // Apply config defaults
-        super(Object.assign({
-            blockSize: 1
-        }, cfg));
+    static createDecryptor(key: WordArray | string, cfg?: BufferedBlockAlgorithmConfig): Cipher {
+        // workaround for typescript not being able to create a abstract creator function directly
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const thisClass: any = this;
 
-        // Store transform mode and key
-        this._xformMode = xformMode;
-        this._key = key;
-
-        // Set initial values
-        this.reset();
+        return new thisClass(this._DEC_XFORM_MODE, key, cfg);
     }
 
     /**
-     * Adds data to be encrypted or decrypted.
+     * Creates this cipher in encryption mode.
      *
-     * @param dataUpdate The data to encrypt or decrypt.
+     * @param key The key.
+     * @param cfg (Optional) The configuration options to use for this operation.
      *
-     * @return The data after processing.
+     * @return A cipher instance.
      *
      * @example
      *
-     *     let encrypted = cipher.process('data');
-     *     let encrypted = cipher.process(wordArray);
+     *     let cipher = AES.createEncryptor(keyWordArray, { iv: ivWordArray });
      */
-    public process(dataUpdate: WordArray | string): WordArray {
-        // Append
-        this._append(dataUpdate);
+    static createEncryptor(key: WordArray | string, cfg?: BufferedBlockAlgorithmConfig): Cipher {
+        // workaround for typescript not being able to create a abstract creator function directly
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const thisClass: any = this;
 
-        // Process available blocks
-        return this._process();
+        return new thisClass(this._ENC_XFORM_MODE, key, cfg);
     }
 
     /**
@@ -169,7 +152,7 @@ export abstract class Cipher extends BufferedBlockAlgorithm {
      *     var encrypted = cipher.finalize('data');
      *     var encrypted = cipher.finalize(wordArray);
      */
-    public finalize(dataUpdate?: WordArray | string): WordArray {
+    finalize(dataUpdate?: WordArray | string): WordArray {
         // Final data update
         if (dataUpdate) {
             this._append(dataUpdate);
@@ -180,7 +163,27 @@ export abstract class Cipher extends BufferedBlockAlgorithm {
     }
 
     /**
+     * Adds data to be encrypted or decrypted.
+     *
+     * @param dataUpdate The data to encrypt or decrypt.
+     *
+     * @return The data after processing.
+     *
+     * @example
+     *
+     *     let encrypted = cipher.process('data');
+     *     let encrypted = cipher.process(wordArray);
+     */
+    process(dataUpdate: WordArray | string): WordArray {
+        // Append
+        this._append(dataUpdate);
+
+        // Process available blocks
+        return this._process();
+    }
+
+    /**
      * Cipher specific finalize function explicitly implemented in the derived class.
      */
-    public abstract _doFinalize(): WordArray;
+    protected abstract _doFinalize(): WordArray;
 }

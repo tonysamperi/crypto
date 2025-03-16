@@ -2,6 +2,7 @@ import {BlockCipher} from "../lib/block-cipher.class.js";
 import {WordArray} from "../lib/word-array.class.js";
 import {BufferedBlockAlgorithmConfig} from "../lib/buffered-block-algorithm-config.interface.js";
 
+/* eslint-disable @typescript-eslint/naming-convention */
 // Define lookup tables
 const SBOX: number[] = [];
 const INV_SBOX: number[] = [];
@@ -70,22 +71,37 @@ const INV_SUB_MIX_3: number[] = [];
 // Precomputed Rcon lookup
 const RCON = [0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36];
 
+/* eslint-enable @typescript-eslint/naming-convention */
 export class AES extends BlockCipher {
     // 256 / 32
-    public static keySize = 8;
+    static keySize = 8;
 
-    _nRounds!: number;
-
-    _key!: WordArray;
-
-    _keyPriorReset!: WordArray;
-
-    _keySchedule!: number[];
-
-    _invKeySchedule!: number[];
+    protected _invKeySchedule!: number[];
+    protected _key!: WordArray;
+    protected _keyPriorReset!: WordArray;
+    protected _keySchedule!: number[];
+    protected _nRounds!: number;
 
     constructor(xformMode: number, key: WordArray, cfg?: BufferedBlockAlgorithmConfig) {
         super(xformMode, key, cfg);
+    }
+
+    decryptBlock(m: number[], offset: number) {
+        // Swap 2nd and 4th rows
+        let t = m[offset + 1];
+        m[offset + 1] = m[offset + 3];
+        m[offset + 3] = t;
+
+        this._doCryptBlock(m, offset, this._invKeySchedule, INV_SUB_MIX_0, INV_SUB_MIX_1, INV_SUB_MIX_2, INV_SUB_MIX_3, INV_SBOX);
+
+        // Inv swap 2nd and 4th rows
+        t = m[offset + 1];
+        m[offset + 1] = m[offset + 3];
+        m[offset + 3] = t;
+    }
+
+    encryptBlock(m: number[], offset: number) {
+        this._doCryptBlock(m, offset, this._keySchedule, SUB_MIX_0, SUB_MIX_1, SUB_MIX_2, SUB_MIX_3, SBOX);
     }
 
     reset() {
@@ -159,39 +175,21 @@ export class AES extends BlockCipher {
         }
     }
 
-    encryptBlock(M: number[], offset: number) {
-        this._doCryptBlock(M, offset, this._keySchedule, SUB_MIX_0, SUB_MIX_1, SUB_MIX_2, SUB_MIX_3, SBOX);
-    }
-
-    decryptBlock(M: number[], offset: number) {
-        // Swap 2nd and 4th rows
-        let t = M[offset + 1];
-        M[offset + 1] = M[offset + 3];
-        M[offset + 3] = t;
-
-        this._doCryptBlock(M, offset, this._invKeySchedule, INV_SUB_MIX_0, INV_SUB_MIX_1, INV_SUB_MIX_2, INV_SUB_MIX_3, INV_SBOX);
-
-        // Inv swap 2nd and 4th rows
-        t = M[offset + 1];
-        M[offset + 1] = M[offset + 3];
-        M[offset + 3] = t;
-    }
-
-    _doCryptBlock(
-        M: number[],
+    protected _doCryptBlock(
+        m: number[],
         offset: number,
         keySchedule: number[],
-        sub_mix_0: number[],
-        sub_mix_1: number[],
-        sub_mix_2: number[],
-        sub_mix_3: number[],
+        subMix0: number[],
+        subMix1: number[],
+        subMix2: number[],
+        subMix3: number[],
         sbox: number[]
     ) {
         // Get input, add round key
-        let s0 = M[offset] ^ keySchedule[0];
-        let s1 = M[offset + 1] ^ keySchedule[1];
-        let s2 = M[offset + 2] ^ keySchedule[2];
-        let s3 = M[offset + 3] ^ keySchedule[3];
+        let s0 = m[offset] ^ keySchedule[0];
+        let s1 = m[offset + 1] ^ keySchedule[1];
+        let s2 = m[offset + 2] ^ keySchedule[2];
+        let s3 = m[offset + 3] ^ keySchedule[3];
 
         // Key schedule row counter
         let ksRow = 4;
@@ -199,13 +197,13 @@ export class AES extends BlockCipher {
         // Rounds
         for (let round = 1; round < this._nRounds; round++) {
             // Shift rows, sub bytes, mix columns, add round key
-            const t0 = sub_mix_0[s0 >>> 24] ^ sub_mix_1[(s1 >>> 16) & 0xff] ^ sub_mix_2[(s2 >>> 8) & 0xff] ^ sub_mix_3[s3 & 0xff] ^
+            const t0 = subMix0[s0 >>> 24] ^ subMix1[(s1 >>> 16) & 0xff] ^ subMix2[(s2 >>> 8) & 0xff] ^ subMix3[s3 & 0xff] ^
                 keySchedule[ksRow++];
-            const t1 = sub_mix_0[s1 >>> 24] ^ sub_mix_1[(s2 >>> 16) & 0xff] ^ sub_mix_2[(s3 >>> 8) & 0xff] ^ sub_mix_3[s0 & 0xff] ^
+            const t1 = subMix0[s1 >>> 24] ^ subMix1[(s2 >>> 16) & 0xff] ^ subMix2[(s3 >>> 8) & 0xff] ^ subMix3[s0 & 0xff] ^
                 keySchedule[ksRow++];
-            const t2 = sub_mix_0[s2 >>> 24] ^ sub_mix_1[(s3 >>> 16) & 0xff] ^ sub_mix_2[(s0 >>> 8) & 0xff] ^ sub_mix_3[s1 & 0xff] ^
+            const t2 = subMix0[s2 >>> 24] ^ subMix1[(s3 >>> 16) & 0xff] ^ subMix2[(s0 >>> 8) & 0xff] ^ subMix3[s1 & 0xff] ^
                 keySchedule[ksRow++];
-            const t3 = sub_mix_0[s3 >>> 24] ^ sub_mix_1[(s0 >>> 16) & 0xff] ^ sub_mix_2[(s1 >>> 8) & 0xff] ^ sub_mix_3[s2 & 0xff] ^
+            const t3 = subMix0[s3 >>> 24] ^ subMix1[(s0 >>> 16) & 0xff] ^ subMix2[(s1 >>> 8) & 0xff] ^ subMix3[s2 & 0xff] ^
                 keySchedule[ksRow++];
 
             // Update state
@@ -226,9 +224,9 @@ export class AES extends BlockCipher {
             keySchedule[ksRow++];
 
         // Set output
-        M[offset] = t0g;
-        M[offset + 1] = t1g;
-        M[offset + 2] = t2g;
-        M[offset + 3] = t3g;
+        m[offset] = t0g;
+        m[offset + 1] = t1g;
+        m[offset + 2] = t2g;
+        m[offset + 3] = t3g;
     }
 }

@@ -2,9 +2,59 @@ import {WordArray} from "../lib/word-array.class.js";
 import {AbstractEncoder} from "./encoder.model.js";
 
 export class Base64 implements AbstractEncoder {
-    public static _map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
-    public static _reverseMap: number[] | undefined = undefined;
+    protected static _map = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    protected static _reverseMap: number[] | undefined = undefined;
+
+    /**
+     * Converts a Base64 string to a word array.
+     *
+     * @param base64Str The Base64 string.
+     *
+     * @return The word array.
+     *
+     * @example
+     *
+     *     let wordArray = Base64.parse(base64String);
+     */
+    static parse(base64Str: string): WordArray {
+        // Shortcuts
+        let base64StrLength = base64Str.length;
+
+        if (this._reverseMap === undefined) {
+            this._reverseMap = [];
+            for (let j = 0; j < this._map.length; j++) {
+                this._reverseMap[this._map.charCodeAt(j)] = j;
+            }
+        }
+
+        // Ignore padding
+        const paddingChar = this._map.charAt(64);
+        if (paddingChar) {
+            const paddingIndex = base64Str.indexOf(paddingChar);
+            if (paddingIndex !== -1) {
+                base64StrLength = paddingIndex;
+            }
+        }
+
+        // Convert
+        return this.parseLoop(base64Str, base64StrLength, this._reverseMap);
+    }
+
+    static parseLoop(base64Str: string, base64StrLength: number, reverseMap: number[]): WordArray {
+        const words: number[] = [];
+        let nBytes = 0;
+        for (let i = 0; i < base64StrLength; i++) {
+            if (i % 4) {
+                const bits1 = reverseMap[base64Str.charCodeAt(i - 1)] << ((i % 4) * 2);
+                const bits2 = reverseMap[base64Str.charCodeAt(i)] >>> (6 - (i % 4) * 2);
+                words[nBytes >>> 2] |= (bits1 | bits2) << (24 - (nBytes % 4) * 8);
+                nBytes++;
+            }
+        }
+
+        return new WordArray(words, nBytes);
+    }
 
     /**
      * Converts a word array to a Base64 string.
@@ -17,7 +67,7 @@ export class Base64 implements AbstractEncoder {
      *
      *     let base64String = Base64.stringify(wordArray);
      */
-    public static stringify(wordArray: WordArray): string {
+    static stringify(wordArray: WordArray): string {
         // Clamp excess bits
         wordArray.clamp();
 
@@ -44,55 +94,5 @@ export class Base64 implements AbstractEncoder {
         }
 
         return base64Chars.join("");
-    }
-
-    /**
-     * Converts a Base64 string to a word array.
-     *
-     * @param base64Str The Base64 string.
-     *
-     * @return The word array.
-     *
-     * @example
-     *
-     *     let wordArray = Base64.parse(base64String);
-     */
-    public static parse(base64Str: string): WordArray {
-        // Shortcuts
-        let base64StrLength = base64Str.length;
-
-        if (this._reverseMap === undefined) {
-            this._reverseMap = [];
-            for (let j = 0; j < this._map.length; j++) {
-                this._reverseMap[this._map.charCodeAt(j)] = j;
-            }
-        }
-
-        // Ignore padding
-        const paddingChar = this._map.charAt(64);
-        if (paddingChar) {
-            const paddingIndex = base64Str.indexOf(paddingChar);
-            if (paddingIndex !== -1) {
-                base64StrLength = paddingIndex;
-            }
-        }
-
-        // Convert
-        return this.parseLoop(base64Str, base64StrLength, this._reverseMap);
-    }
-
-    public static parseLoop(base64Str: string, base64StrLength: number, reverseMap: number[]): WordArray {
-        const words: number[] = [];
-        let nBytes = 0;
-        for (let i = 0; i < base64StrLength; i++) {
-            if (i % 4) {
-                const bits1 = reverseMap[base64Str.charCodeAt(i - 1)] << ((i % 4) * 2);
-                const bits2 = reverseMap[base64Str.charCodeAt(i)] >>> (6 - (i % 4) * 2);
-                words[nBytes >>> 2] |= (bits1 | bits2) << (24 - (nBytes % 4) * 8);
-                nBytes++;
-            }
-        }
-
-        return new WordArray(words, nBytes);
     }
 }

@@ -15,7 +15,7 @@ describe("Base64", () => {
         tonyHelper: base64HelperBuilder(Base64, Utf8)
     };
 
-    it("should encode base64", () => {
+    it("should encode Base64", () => {
         for (const {value, hashed} of _ctx.pairs) {
             const cryptoJs = _ctx.cryHelper.encode(value);
             const tony = _ctx.tonyHelper.encode(value);
@@ -25,7 +25,7 @@ describe("Base64", () => {
         }
     });
 
-    it("should decode base64", () => {
+    it("should decode Base64", () => {
         for (const {value, hashed} of _ctx.pairs) {
             const cryptoJs = _ctx.cryHelper.decode(hashed);
             const tony = _ctx.tonyHelper.decode(hashed);

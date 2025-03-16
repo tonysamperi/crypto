@@ -1,7 +1,12 @@
-import {BlockCipherModeAlgorithm} from "./block-cipher-mode-algorithm.class.js";
+import {BlockCipherModeAlgorithm} from "../block-cipher-mode-algorithm.class.js";
 
-export class CBCEncryptor extends BlockCipherModeAlgorithm {
-    public _prevBlock: number[] | undefined;
+export class CBCDecryptor extends BlockCipherModeAlgorithm {
+
+    get prevBlock() {
+        return this._prevBlock;
+    }
+
+    protected _prevBlock: number[] | undefined;
 
     /**
      * Processes the data block at offset.
@@ -13,21 +18,24 @@ export class CBCEncryptor extends BlockCipherModeAlgorithm {
      *
      *     mode.processBlock(data.words, offset);
      */
-    public processBlock(words: number[], offset: number) {
+    processBlock(words: number[], offset: number) {
         // Check if we have a blockSize
         if (this._cipher.cfg.blockSize === undefined) {
             throw new Error("missing blockSize in cipher config");
         }
 
-        // XOR and encrypt
-        this.xorBlock(words, offset, this._cipher.cfg.blockSize);
-        this._cipher.encryptBlock(words, offset);
-
         // Remember this block to use with next block
-        this._prevBlock = words.slice(offset, offset + this._cipher.cfg.blockSize);
+        const thisBlock = words.slice(offset, offset + this._cipher.cfg.blockSize);
+
+        // Decrypt and XOR
+        this._cipher.decryptBlock(words, offset);
+        this.xorBlock(words, offset, this._cipher.cfg.blockSize);
+
+        // This block becomes the previous block
+        this._prevBlock = thisBlock;
     }
 
-    public xorBlock(words: number[], offset: number, blockSize: number) {
+    xorBlock(words: number[], offset: number, blockSize: number) {
         // Choose mixing block
         let block;
         if (this._iv) {

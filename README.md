@@ -1,139 +1,107 @@
-# TS Luxon
+# crypto
+TypeScript library of crypto standards.
 
-[![MIT License][license-image]][license] [![Build Status][gh-actions-image]][gh-actions-url] [![NPM version][npm-version-image]][npm-url] [![Coverage Status][test-coverage-image]][test-coverage-url] ![PRs welcome][contributing-image]
-[![Size](https://img.shields.io/bundlephobia/minzip/ts-luxon)](https://unpkg.com/ts-luxon@latest/dist/cjs/index.cjs)
+[![MIT License][license-image]][license] [![Build Status][gh-actions-image]][gh-actions-url] ![[NPM version][npm-version-image]][npm-url] ![PRs welcome][contributing-image]
+[![Size](https://img.shields.io/bundlephobia/minzip/@tonysamperi/crypto)](https://unpkg.com/@tonysamperi/crypto@latest/dist/cjs/index.cjs)
 
-TS Luxon is a library for working with dates and times in Javscript and Typescript.
+I've been using crypto-js, but it was recently discontinued.
+It's not for that reason, but let's be honest: you always hated it for its typings.
+Man, seriously, a nightmare if you were in modern projects.
+I've been recently exploring ESM modules, so I've been making all of my libs **tree-shakeable**.
+Crypto-js is a not-so-tiny brick. CommonJS is ok, but there was just no way of not having those 200KBs in your bundles.
 
-This repo was initially created by [GillesDebunne]([initial-autor]) which of course started from [Luxon]([original-luxon]) itself.
+Well **not anymore**!!!
 
-Many thanks to both of them for this fantastic work. 
+The syntax is very similar to the one in crypto-js, except that now all the entities are classes, so it's even more versatile.
+Little downside, big upside IMHO.
+The downside is that I had to use other names for the helpers offered by crypto-js such as SHA1, SHA256, etc.
 
-I decided to fork his work, because we don't know for sure if and when Luxon will adopt this source.
+Nothing impossible in any case: how SHA1 is the hasher class (that you can optionally extend), while the helper is just called `sha1Helper`.
 
-I realized moment wasn't suitable anymore for my projects, but I couldn't wait to have a more stable version and at this time Luxon (v 1.25.0) had structural issues, which resulted in errors in my Angular projects.
+It's easy, isn't it?
 
-## New feature: preview releases
+## You can import whatever you want from the root
+
+```js
+import {sha256Helper, Utf8} from "@tonysamperi/crypto";
+
+const myHash = sha256Helper(Utf8.parse(value)).toString();
+```
+
+## Preview releases
 With v6 I introduced a new release tag `next`.
 These versions are basically release candidates that can be tried out before they get released.
 The next version tag gets cleared out automatically upon release of the latest stable version.
 
-The beta releases instead, like it's always been, represent **unstable** releases, and they're subject to dramatic changes. 
-
-## Upgrading to 6.x
-This finally solves the coexistence of ESM and CJS.
-
-Many thanks to the autors of [arethetypeswrong](https://arethetypeswrong.github.io/) and [publint](https://publint.dev/), which were essential tools to debug and understand the package.json.
-
-### Very important for Typescript users
-We reached a pretty much stable point for **Intl** support, which means we could finally drop that "compat" types that were needed to have a stable behaviour across various versions.
-So in order to make everything work as expected you should have lib **es2021** or later in your tsconfig.
-Another option could be using `skipLibCheck`, but depending on how to want to manage your compiler, you might want to keep this off (default).
-
-```json
-{
-    "include": [
-        "src"
-    ],
-    "exclude": [
-        "test"
-    ],
-    "compilerOptions": {
-        "module": "CommonJS",
-        "target": "es6",
-        "lib": [
-            "esnext"
-        ]
-    }
-}
-```
-
-### Dropped the UMD bundle
-Seriously. It's 2025. If you're using IE11 or require-js you may as well stick with date-fns, or moment.
-We drop heavy old stuff like the UMD bundle.
-But if you want to have tsLuxon in a global variable like it was before, you can do something like this:
-
-```html
-<script type="module">
-  import * as tsLuxon from "https://unpkg.com/ts-luxon?module";
-  window.tsLuxon = tsLuxon;
-</script>
-```
-You might even adjust this to work with require js, if you're happy! 😀
-Although seriously, in that case, I suggest you to compile your own bundle with esbuild starting from the esm build. It's literally one line of code.
-
-## Upgrading to 5.x
-Compared to v4 here I only changed how the library is built and the outputs.
-It should be completely transparent to the user given the adjustments to the package.json and given the fact that the es6 export of v4 is **interpreted as CJS anyways**.
-I'm working on adding a real ESM module output to v5, but it seems there's no way of making the two coexist.
-
-## Upgrading to 4.x
-
-See the [docs page](https://tonysamperi.github.io/ts-luxon/docs)
-
-```js
-DateTime.now().setZone('America/New_York').minus({ weeks: 1 }).endOf('day').toISO();
-```
+The beta releases instead, like it's always been, represent **unstable** releases, and they're subject to dramatic changes.
 
 ## Features
- * DateTime, Duration, and Interval types.
- * Immutable, chainable, unambiguous API.
- * Parsing and formatting for common and custom formats.
- * Native time zone and Intl support (no locale or tz files).
+
+I started with a few features that I personally need, but I will migrate others once a while.
+One that I have in mind is TripleDES.
+
+### HASHING
+
+* md5
+* sha1
+* sha256
+* sha512
+
+### KDF
+
+* pbkdf2
+* evpkdf
+
+### ENCODING
+
+* latin1
+* utf8
+* hex
+* base64
+
+### MODE
+
+* ECB
+* CBC
+* CTR
+
+### PADDING
+
+* pkcs7
+* zeropadding
+* nopadding
 
 ## Usage
 
 ### Via npm
 
-`npm i ts-luxon --save`
+`npm i @tonysamperi/crypto --save`
 
 then
 
 ```typescript
-import {DateTime} from "ts-luxon";
+import {Hex} from "ts-luxon";
 
-const myDto = DateTime.local();
+const myWord = Hex.parse("1a2b3c");
 ```
-
-### Bundle / UMD
-
-You can download the umd bundle from here:
-
-* [ts-luxon.umd.js](https://unpkg.com/ts-luxon@latest/dist/ts-luxon.umd.js)
 
 # DOCS
 
-See the [docs page](https://tonysamperi.github.io/ts-luxon/docs)
-
-and the [demo page](https://tonysamperi.github.io/ts-luxon)
-
-more example will be added! For suggestions open an issue or a PR (yes, even on the demo site if you want)!
+COMING SOON
 
 ---
 
-Thanks to [fire332](https://github.com/fire332) for his contribution about package.json
-
 ## Development
 
-Please, read the CONTRIBUTING.md you can find in the master branch.
-
-[initial-author]: https://github.com/GillesDebunne
-[original-luxon]: https://github.com/moment/luxon
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
 [license]: LICENSE
 
-[gh-actions-url]: https://github.com/tonysamperi/ts-luxon/actions?query=workflow%3A%22Test%22
-[gh-actions-image]: https://github.com/tonysamperi/ts-luxon/workflows/Test/badge.svg?branch=master
+[gh-actions-url]: https://github.com/tonysamperi/crypto/actions?query=workflow%3A%22Test%22
+[gh-actions-image]: https://github.com/tonysamperi/crypto/workflows/Test/badge.svg?branch=master
 
-[npm-url]: https://npmjs.org/package/ts-luxon
-[npm-version-image]: https://badge.fury.io/js/ts-luxon.svg
+[npm-url]: https://npmjs.org/package/@tonysamperi/crypto
+[npm-version-image]: https://badge.fury.io/js/@tonysamperi/crypto.svg
 
-[doc-url]: https://tonysamperi.github.io/ts-luxon/
-[doc-coverage-image]: https://moment.github.io/luxon/docs/_media/Luxon_icon_64x64.png
-
-[test-coverage-url]: https://codecov.io/gh/tonysamperi/ts-luxon
-[test-coverage-image]: https://codecov.io/gh/tonysamperi/ts-luxon/branch/master/graph/badge.svg
+[doc-url]: https://tonysamperi.github.io/crypto/
 
 [contributing-image]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
-
-

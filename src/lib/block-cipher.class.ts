@@ -2,11 +2,12 @@ import {Cipher} from "./cipher.class.js";
 import {WordArray} from "./word-array.class.js";
 import {BufferedBlockAlgorithmConfig} from "./buffered-block-algorithm-config.interface.js";
 import {BlockCipherModeAlgorithm} from "../mode/block-cipher-mode-algorithm.class.js";
-import {CBC} from "../mode/cbc.class.js";
+import {CBC} from "../mode/cbc/cbc.class.js";
 import {PKCS7} from "../pad/pkcs7.class.js";
 
 export abstract class BlockCipher extends Cipher {
-    public _mode!: BlockCipherModeAlgorithm;
+
+    protected _mode!: BlockCipherModeAlgorithm;
 
     constructor(xformMode: number, key: WordArray, cfg?: BufferedBlockAlgorithmConfig) {
         super(xformMode, key, Object.assign({
@@ -17,7 +18,12 @@ export abstract class BlockCipher extends Cipher {
         }, cfg));
     }
 
-    public reset() {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    abstract decryptBlock(M: number[], offset: number): void;
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    abstract encryptBlock(M: number[], offset: number): void;
+
+    reset() {
         // Reset cipher
         super.reset();
 
@@ -28,7 +34,7 @@ export abstract class BlockCipher extends Cipher {
 
         // Reset block mode
         let modeCreator;
-        if (this._xformMode === (<typeof BlockCipher>this.constructor)._ENC_XFORM_MODE) {
+        if (this._xformMode === (this.constructor as typeof BlockCipher)._ENC_XFORM_MODE) {
             modeCreator = this.cfg.mode.createEncryptor;
         }
         else /* if (this._xformMode == this._DEC_XFORM_MODE) */ {
@@ -46,11 +52,7 @@ export abstract class BlockCipher extends Cipher {
         }
     }
 
-    _doProcessBlock(words: number[], offset: number) {
-        this._mode.processBlock(words, offset);
-    }
-
-    _doFinalize() {
+    protected _doFinalize() {
         // Check if we have a padding strategy
         if (this.cfg.padding === undefined) {
             throw new Error("missing padding in config");
@@ -81,7 +83,8 @@ export abstract class BlockCipher extends Cipher {
         return finalProcessedBlocks;
     }
 
-    public abstract encryptBlock(M: number[], offset: number): void;
+    protected _doProcessBlock(words: number[], offset: number) {
+        this._mode.processBlock(words, offset);
+    }
 
-    public abstract decryptBlock(M: number[], offset: number): void;
 }

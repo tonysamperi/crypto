@@ -87,7 +87,7 @@ export class SerializableCipher {
      *         }
      *     );
      */
-    public static decrypt(
+    static decrypt(
         cipher: typeof Cipher,
         ciphertext: CipherParams | string,
         key: WordArray | string,

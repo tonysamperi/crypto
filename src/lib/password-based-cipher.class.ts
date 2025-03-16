@@ -8,57 +8,13 @@ import {Formatter} from "../format/formatter.interface.js";
 import {OpenSSLKdf} from "../kdf/open-ssl-kdf.class.js";
 
 export class PasswordBasedCipher {
-    public static cfg: BufferedBlockAlgorithmConfig = {
+
+    static cfg: BufferedBlockAlgorithmConfig = {
         blockSize: 4,
         iv: new WordArray([]),
         format: OpenSSL,
         kdf: OpenSSLKdf
     };
-
-    /**
-     * Encrypts a message using a password.
-     *
-     * @param cipher The cipher algorithm to use.
-     * @param message The message to encrypt.
-     * @param password The password.
-     * @param cfg (Optional) The configuration options to use for this operation.
-     *
-     * @return A cipher params object.
-     *
-     * @example
-     *
-     *     var ciphertextParams = CryptoJS.lib.PasswordBasedCipher.encrypt(AES, message, 'password');
-     *     var ciphertextParams = CryptoJS.lib.PasswordBasedCipher.encrypt(AES, message, 'password', { format: OpenSSL });
-     */
-    public static encrypt(
-        cipher: typeof Cipher,
-        message: WordArray | string,
-        password: string,
-        cfg?: BufferedBlockAlgorithmConfig
-    ): CipherParams {
-        // Apply config defaults
-        const config = Object.assign({}, this.cfg, cfg);
-
-        // Check if we have a kdf
-        if (config.kdf === undefined) {
-            throw new Error("missing kdf in config");
-        }
-
-        // Derive key and other params
-        const derivedParams: CipherParams = config.kdf.execute(password, cipher.keySize, cipher.ivSize);
-
-        // Check if we have an IV
-        if (derivedParams.iv !== undefined) {
-            // Add IV to config
-            config.iv = derivedParams.iv;
-        }
-
-        // Encrypt
-        const ciphertext: CipherParams = SerializableCipher.encrypt.call(this, cipher, message, derivedParams.key, config);
-
-        // Mix in derived params
-        return ciphertext.extend(derivedParams);
-    }
 
     /**
      * Decrypts serialized ciphertext using a password.
@@ -75,7 +31,7 @@ export class PasswordBasedCipher {
      *     var plaintext = PasswordBasedCipher.decrypt(AES, formattedCiphertext, 'password', { format: OpenSSL });
      *     var plaintext = PasswordBasedCipher.decrypt(AES, ciphertextParams, 'password', { format: OpenSSL });
      */
-    public static decrypt(
+    static decrypt(
         cipher: typeof Cipher,
         ciphertext: CipherParams | string,
         password: string,
@@ -111,6 +67,51 @@ export class PasswordBasedCipher {
     }
 
     /**
+     * Encrypts a message using a password.
+     *
+     * @param cipher The cipher algorithm to use.
+     * @param message The message to encrypt.
+     * @param password The password.
+     * @param cfg (Optional) The configuration options to use for this operation.
+     *
+     * @return A cipher params object.
+     *
+     * @example
+     *
+     *     var ciphertextParams = CryptoJS.lib.PasswordBasedCipher.encrypt(AES, message, 'password');
+     *     var ciphertextParams = CryptoJS.lib.PasswordBasedCipher.encrypt(AES, message, 'password', { format: OpenSSL });
+     */
+    static encrypt(
+        cipher: typeof Cipher,
+        message: WordArray | string,
+        password: string,
+        cfg?: BufferedBlockAlgorithmConfig
+    ): CipherParams {
+        // Apply config defaults
+        const config = Object.assign({}, this.cfg, cfg);
+
+        // Check if we have a kdf
+        if (config.kdf === undefined) {
+            throw new Error("missing kdf in config");
+        }
+
+        // Derive key and other params
+        const derivedParams: CipherParams = config.kdf.execute(password, cipher.keySize, cipher.ivSize);
+
+        // Check if we have an IV
+        if (derivedParams.iv !== undefined) {
+            // Add IV to config
+            config.iv = derivedParams.iv;
+        }
+
+        // Encrypt
+        const ciphertext: CipherParams = SerializableCipher.encrypt.call(this, cipher, message, derivedParams.key, config);
+
+        // Mix in derived params
+        return ciphertext.extend(derivedParams);
+    }
+
+    /**
      * Converts serialized ciphertext to CipherParams,
      * else assumed CipherParams already and returns ciphertext unchanged.
      *
@@ -123,7 +124,7 @@ export class PasswordBasedCipher {
      *
      *     var ciphertextParams = CryptoJS.lib.SerializableCipher._parse(ciphertextStringOrParams, format);
      */
-    public static _parse(ciphertext: CipherParams | string, format: Formatter): CipherParams {
+    protected static _parse(ciphertext: CipherParams | string, format: Formatter): CipherParams {
         if (typeof ciphertext === "string") {
             return format.parse(ciphertext);
         }
