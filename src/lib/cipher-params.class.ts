@@ -5,23 +5,16 @@ import {Padding} from "../pad/padding.model.js";
 import {Formatter} from "../format/formatter.interface.js";
 
 export class CipherParams {
-    ciphertext?: WordArray;
-
-    key?: WordArray | string;
-
-    iv?: WordArray;
-
-    salt?: WordArray | string;
 
     algorithm?: typeof Cipher;
-
-    mode?: typeof BlockCipherMode;
-
-    padding?: Padding;
-
     blockSize?: number;
-
+    ciphertext?: WordArray;
     formatter?: Formatter;
+    iv?: WordArray;
+    key?: WordArray | string;
+    mode?: typeof BlockCipherMode;
+    padding?: Padding;
+    salt?: WordArray | string;
 
     /**
      * Initializes a newly created cipher params object.

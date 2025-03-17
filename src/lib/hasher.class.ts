@@ -35,7 +35,7 @@ export abstract class Hasher extends BufferedBlockAlgorithm {
      *
      *     const SHA256 = Hasher._createHelper(SHA256);
      */
-    static _createHelper<T extends Hasher = Hasher>(hasher: HasherConstructor<T>): (message: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) => WordArray {
+    protected static _createHelper<T extends Hasher = Hasher>(hasher: HasherConstructor<T>): (message: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) => WordArray {
         function helper(message: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) {
             const hasherClass: any = hasher;
 
@@ -45,11 +45,6 @@ export abstract class Hasher extends BufferedBlockAlgorithm {
         }
 
         return helper;
-    }
-
-    static clone(): Hasher {
-        // @ts-expect-error this will work on extended classes
-        return new this(this.cfg);
     }
 
     protected abstract _doFinalize(): WordArray;
