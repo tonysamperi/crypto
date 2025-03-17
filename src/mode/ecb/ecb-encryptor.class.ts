@@ -1,6 +1,6 @@
-import {BlockCipherModeAlgorithm} from "./block-cipher-mode-algorithm.class.js";
+import {BlockCipherModeAlgorithm} from "../block-cipher-mode-algorithm.class.js";
 
-export class ECBDecryptor extends BlockCipherModeAlgorithm {
+export class ECBEncryptor extends BlockCipherModeAlgorithm {
     /**
      * Processes the data block at offset.
      *
@@ -11,7 +11,7 @@ export class ECBDecryptor extends BlockCipherModeAlgorithm {
      *
      *     mode.processBlock(data.words, offset);
      */
-    public processBlock(words: Array<number>, offset: number) {
-        this._cipher.decryptBlock(words, offset);
+    public processBlock(words: number[], offset: number) {
+        this._cipher.encryptBlock(words, offset);
     }
 }

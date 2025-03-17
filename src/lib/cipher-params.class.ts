@@ -1,27 +1,20 @@
 import {WordArray} from "./word-array.class.js";
 import {Cipher} from "./cipher.class.js";
 import {BlockCipherMode} from "../mode/block-cipher-mode.class.js";
-import {Padding} from "../pad/padding.class.js";
+import {Padding} from "../pad/padding.model.js";
 import {Formatter} from "../format/formatter.interface.js";
 
 export class CipherParams {
-    ciphertext?: WordArray;
-
-    key?: WordArray | string;
-
-    iv?: WordArray;
-
-    salt?: WordArray | string;
 
     algorithm?: typeof Cipher;
-
-    mode?: typeof BlockCipherMode;
-
-    padding?: Padding;
-
     blockSize?: number;
-
+    ciphertext?: WordArray;
     formatter?: Formatter;
+    iv?: WordArray;
+    key?: WordArray | string;
+    mode?: typeof BlockCipherMode;
+    padding?: Padding;
+    salt?: WordArray | string;
 
     /**
      * Initializes a newly created cipher params object.
@@ -35,7 +28,7 @@ export class CipherParams {
      *         key: keyWordArray,
      *         iv: ivWordArray,
      *         salt: saltWordArray,
-     *         algorithm: AESAlgorithm,
+     *         algorithm: AES,
      *         mode: CBC,
      *         padding: PKCS7,
      *         blockSize: 4,

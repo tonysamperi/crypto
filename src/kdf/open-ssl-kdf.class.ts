@@ -1,8 +1,9 @@
-import { WordArray } from '../lib/word-array.class.js';
-import { CipherParams } from '../lib/cipher-params.class.js';
-import { EvpKDF } from '../algo/evp-kdf.class.js';
+import {WordArray} from "../lib/word-array.class.js";
+import {CipherParams} from "../lib/cipher-params.class.js";
+import {EVPKDF} from "./evpkdf.class.js";
+import {AbstractKDF} from "./kdf.model.js";
 
-export class OpenSSLKdf {
+export class OpenSSLKdf implements AbstractKDF {
     /**
      * Derives a key and IV from a password.
      *
@@ -18,20 +19,21 @@ export class OpenSSLKdf {
      *     let derivedParams = OpenSSL.execute('Password', 256/32, 128/32);
      *     let derivedParams = OpenSSL.execute('Password', 256/32, 128/32, 'saltsalt');
      */
-    public static execute(password: string, keySize: number, ivSize: number, salt?: WordArray | string): CipherParams {
+    static execute(password: string, keySize: number, ivSize: number, salt?: WordArray | string): CipherParams {
         // Generate random salt
-        if(!salt) {
+        if (!salt) {
             salt = WordArray.random(64 / 8);
         }
 
         // Derive key and IV
-        const key = (new EvpKDF({ keySize: keySize + ivSize })).compute(password, salt);
+        const key = (new EVPKDF({keySize: keySize + ivSize})).compute(password, salt);
 
         // Separate key and IV
         const iv = new WordArray(key.words.slice(keySize), ivSize * 4);
         key.sigBytes = keySize * 4;
 
         // Return params
-        return new CipherParams({ key: key, iv: iv, salt: salt });
+        return new CipherParams({key: key, iv: iv, salt: salt});
     }
+
 }

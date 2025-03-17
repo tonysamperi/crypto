@@ -11,15 +11,9 @@ jobs:
 
         runs-on: ubuntu-latest
 
-        env:
-            LANG: it_IT.utf8
-            LIMIT_JEST: yes
-            TZ: Europe/Rome
-
         strategy:
             matrix:
                 node-version:
-                    - 20.18.3 # latest 20.x
                     - 22.14.0 # latest 22.x
 
         steps:
@@ -31,7 +25,5 @@ jobs:
                     cache: 'npm'
             -   run: corepack enable
             -   run: yarn install
-            -   run: npm run build
             -   run: npm run test
-            -   run: npm run typedoc
-            -   run: bash <(curl -s https://codecov.io/bash)
+            -   run: npm run build

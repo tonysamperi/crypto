@@ -25,7 +25,7 @@ jobs:
                     echo checking prerelease marker: $prerelease
                     if [[ "$pkgversion" =~ \.0\.0$ ]]; then
                         echo "New major version detected. Removing 'next' dist-tag..."
-                        npm dist-tag remove ts-luxon next
+                        npm dist-tag remove @tonysamperi/crypto next
                     fi
                     if [[ -n "$prerelease" ]]; then
                         npm run "publish:$prerelease"

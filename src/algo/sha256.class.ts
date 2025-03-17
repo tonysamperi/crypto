@@ -2,14 +2,16 @@ import {Hasher} from "../lib/hasher.class.js";
 import {WordArray} from "../lib/word-array.class.js";
 
 // Initialization and round constants tables
-const H: Array<number> = [];
-const K: Array<number> = [];
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const H: number[] = [];
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const K: number[] = [];
 
 // Compute constants
 (function () {
     function isPrime(n: number) {
-        var sqrtN = Math.sqrt(n);
-        for (var factor = 2; factor <= sqrtN; factor++) {
+        const sqrtN = Math.sqrt(n);
+        for (let factor = 2; factor <= sqrtN; factor++) {
             if (!(n % factor)) {
                 return false;
             }
@@ -22,8 +24,8 @@ const K: Array<number> = [];
         return ((n - (n | 0)) * 0x100000000) | 0;
     }
 
-    var n = 2;
-    var nPrime = 0;
+    let n = 2;
+    let nPrime = 0;
     while (nPrime < 64) {
         if (isPrime(n)) {
             if (nPrime < 8) {
@@ -39,36 +41,55 @@ const K: Array<number> = [];
 }());
 
 // Reusable object
-const W: Array<number> = [];
+// eslint-disable-next-line @typescript-eslint/naming-convention
+const W: number[] = [];
 
 export class SHA256 extends Hasher {
-    public _hash!: WordArray;
+    private _hash: WordArray;
 
-    public reset() {
+    constructor() {
+        super();
+    }
+
+    reset() {
         // reset core values
         super.reset();
 
         this._hash = new WordArray(H.slice(0));
     }
 
-    public _doProcessBlock(M: Array<number>, offset: number) {
-        // Shortcut
-        const Hl = this._hash.words;
+    protected _doFinalize(): WordArray {
+        const nBitsTotal = this._nDataBytes * 8;
+        const nBitsLeft = this._data.sigBytes * 8;
 
+        // Add padding
+        this._data.words[nBitsLeft >>> 5] |= 0x80 << (24 - nBitsLeft % 32);
+        this._data.words[(((nBitsLeft + 64) >>> 9) << 4) + 14] = Math.floor(nBitsTotal / 0x100000000);
+        this._data.words[(((nBitsLeft + 64) >>> 9) << 4) + 15] = nBitsTotal;
+        this._data.sigBytes = this._data.words.length * 4;
+
+        // Hash final blocks
+        this._process();
+
+        // Return final computed hash
+        return this._hash;
+    }
+
+    protected _doProcessBlock(m: number[], offset: number) {
         // Working variables
-        let a = Hl[0];
-        let b = Hl[1];
-        let c = Hl[2];
-        let d = Hl[3];
-        let e = Hl[4];
-        let f = Hl[5];
-        let g = Hl[6];
-        let h = Hl[7];
+        let a = this._hash.words[0];
+        let b = this._hash.words[1];
+        let c = this._hash.words[2];
+        let d = this._hash.words[3];
+        let e = this._hash.words[4];
+        let f = this._hash.words[5];
+        let g = this._hash.words[6];
+        let h = this._hash.words[7];
 
         // Computation
         for (let i = 0; i < 64; i++) {
             if (i < 16) {
-                W[i] = M[offset + i] | 0;
+                W[i] = m[offset + i] | 0;
             }
             else {
                 const gamma0x = W[i - 15];
@@ -104,30 +125,14 @@ export class SHA256 extends Hasher {
         }
 
         // Intermediate hash value
-        Hl[0] = (Hl[0] + a) | 0;
-        Hl[1] = (Hl[1] + b) | 0;
-        Hl[2] = (Hl[2] + c) | 0;
-        Hl[3] = (Hl[3] + d) | 0;
-        Hl[4] = (Hl[4] + e) | 0;
-        Hl[5] = (Hl[5] + f) | 0;
-        Hl[6] = (Hl[6] + g) | 0;
-        Hl[7] = (Hl[7] + h) | 0;
+        this._hash.words[0] = (this._hash.words[0] + a) | 0;
+        this._hash.words[1] = (this._hash.words[1] + b) | 0;
+        this._hash.words[2] = (this._hash.words[2] + c) | 0;
+        this._hash.words[3] = (this._hash.words[3] + d) | 0;
+        this._hash.words[4] = (this._hash.words[4] + e) | 0;
+        this._hash.words[5] = (this._hash.words[5] + f) | 0;
+        this._hash.words[6] = (this._hash.words[6] + g) | 0;
+        this._hash.words[7] = (this._hash.words[7] + h) | 0;
     }
 
-    public _doFinalize(): WordArray {
-        const nBitsTotal = this._nDataBytes * 8;
-        const nBitsLeft = this._data.sigBytes * 8;
-
-        // Add padding
-        this._data.words[nBitsLeft >>> 5] |= 0x80 << (24 - nBitsLeft % 32);
-        this._data.words[(((nBitsLeft + 64) >>> 9) << 4) + 14] = Math.floor(nBitsTotal / 0x100000000);
-        this._data.words[(((nBitsLeft + 64) >>> 9) << 4) + 15] = nBitsTotal;
-        this._data.sigBytes = this._data.words.length * 4;
-
-        // Hash final blocks
-        this._process();
-
-        // Return final computed hash
-        return this._hash;
-    }
 }

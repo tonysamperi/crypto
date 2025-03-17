@@ -1,7 +1,12 @@
-import {BlockCipherModeAlgorithm} from "./block-cipher-mode-algorithm.class.js";
+import {BlockCipherModeAlgorithm} from "../block-cipher-mode-algorithm.class.js";
 
 export class CBCEncryptor extends BlockCipherModeAlgorithm {
-    public _prevBlock: Array<number> | undefined;
+
+    get prevBlock() {
+        return this._prevBlock;
+    }
+
+    protected _prevBlock: number[] | undefined;
 
     /**
      * Processes the data block at offset.
@@ -13,7 +18,7 @@ export class CBCEncryptor extends BlockCipherModeAlgorithm {
      *
      *     mode.processBlock(data.words, offset);
      */
-    public processBlock(words: Array<number>, offset: number) {
+    processBlock(words: number[], offset: number) {
         // Check if we have a blockSize
         if (this._cipher.cfg.blockSize === undefined) {
             throw new Error("missing blockSize in cipher config");
@@ -27,7 +32,7 @@ export class CBCEncryptor extends BlockCipherModeAlgorithm {
         this._prevBlock = words.slice(offset, offset + this._cipher.cfg.blockSize);
     }
 
-    public xorBlock(words: Array<number>, offset: number, blockSize: number) {
+    xorBlock(words: number[], offset: number, blockSize: number) {
         // Choose mixing block
         let block;
         if (this._iv) {
@@ -40,12 +45,9 @@ export class CBCEncryptor extends BlockCipherModeAlgorithm {
             block = this._prevBlock;
         }
 
-        // block should never be undefined but we want to make typescript happy
-        if (block !== undefined) {
-            // XOR blocks
-            for (let i = 0; i < blockSize; i++) {
-                words[offset + i] ^= block[i];
-            }
+        // XOR blocks
+        for (let i = 0; i < blockSize; i++) {
+            words[offset + i] ^= block[i];
         }
     }
 }

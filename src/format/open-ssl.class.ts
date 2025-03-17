@@ -3,6 +3,36 @@ import {WordArray} from "../lib/word-array.class.js";
 import {Base64} from "../enc/base64.class.js";
 
 export class OpenSSL {
+
+    /**
+     * Converts an OpenSSL-compatible string to a cipher params object.
+     *
+     * @param openSSLStr The OpenSSL-compatible string.
+     *
+     * @return The cipher params object.
+     *
+     * @example
+     *
+     *     let cipherParams = OpenSSLFormatter.parse(openSSLString);
+     */
+    static parse(openSSLStr: string): CipherParams {
+        // Parse base64
+        const ciphertext = Base64.parse(openSSLStr);
+
+        // Test for salt
+        let salt: WordArray | undefined;
+        if (ciphertext.words[0] === 0x53616c74 && ciphertext.words[1] === 0x65645f5f) {
+            // Extract salt
+            salt = new WordArray(ciphertext.words.slice(2, 4));
+
+            // Remove salt from ciphertext
+            ciphertext.words.splice(0, 4);
+            ciphertext.sigBytes -= 16;
+        }
+
+        return new CipherParams({ciphertext: ciphertext, salt: salt});
+    }
+
     /**
      * Converts a cipher params object to an OpenSSL-compatible string.
      *
@@ -39,32 +69,4 @@ export class OpenSSL {
         return wordArray.toString(Base64);
     }
 
-    /**
-     * Converts an OpenSSL-compatible string to a cipher params object.
-     *
-     * @param openSSLStr The OpenSSL-compatible string.
-     *
-     * @return The cipher params object.
-     *
-     * @example
-     *
-     *     let cipherParams = OpenSSLFormatter.parse(openSSLString);
-     */
-    public static parse(openSSLStr: string): CipherParams {
-        // Parse base64
-        const ciphertext = Base64.parse(openSSLStr);
-
-        // Test for salt
-        let salt: WordArray | undefined;
-        if (ciphertext.words[0] === 0x53616c74 && ciphertext.words[1] === 0x65645f5f) {
-            // Extract salt
-            salt = new WordArray(ciphertext.words.slice(2, 4));
-
-            // Remove salt from ciphertext
-            ciphertext.words.splice(0, 4);
-            ciphertext.sigBytes -= 16;
-        }
-
-        return new CipherParams({ciphertext: ciphertext, salt: salt});
-    }
 }

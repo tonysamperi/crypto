@@ -1,6 +1,7 @@
-import { WordArray } from '../lib/word-array.class.js';
+import {WordArray} from "../lib/word-array.class.js";
+import {AbstractPadding} from "./padding.model.js";
 
-export class PKCS7 {
+export class PKCS7 implements AbstractPadding {
     /**
      * Pads data using the algorithm defined in PKCS #5/7.
      *
@@ -11,7 +12,7 @@ export class PKCS7 {
      *
      *     PKCS7.pad(wordArray, 4);
      */
-    public static pad(data: WordArray, blockSize: number): void {
+    static pad(data: WordArray, blockSize: number): void {
         // Shortcut
         const blockSizeBytes = blockSize * 4;
 
@@ -41,7 +42,7 @@ export class PKCS7 {
      *
      *     PKCS7.unpad(wordArray);
      */
-    public static unpad(data: WordArray): void {
+    static unpad(data: WordArray): void {
         // Get number of padding bytes from last byte
         const nPaddingBytes = data.words[(data.sigBytes - 1) >>> 2] & 0xff;
 

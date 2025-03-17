@@ -159,11 +159,8 @@ export default tsEslint.config({
             "node_modules/**/*",
             "dist/**/*",
             "test/**/*",
-            "**/gulpfile.cjs",
-            "**/build.config.js",
-            "**/jest.config.js",
-            "eslint.config.js",
-            "webpack*"
+            "build*.config.mjs",
+            "jest*.mjs"
         ]
     },
     {

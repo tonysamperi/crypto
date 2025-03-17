@@ -13,6 +13,60 @@ export class SerializableCipher {
     };
 
     /**
+     * Decrypts serialized ciphertext.
+     *
+     * @param cipher The cipher algorithm to use.
+     * @param ciphertext The ciphertext to decrypt.
+     * @param key The key.
+     * @param optionalCfg The configuration options to use for this operation.
+     *
+     * @return The plaintext.
+     *
+     * @example
+     *
+     *     let plaintext = SerializableCipher.decrypt(
+     *         AESAlgorithm,
+     *         formattedCiphertext,
+     *         key, {
+     *             iv: iv,
+     *             format: CryptoJS.format.OpenSSL
+     *         }
+     *     );
+     *
+     *     let plaintext = SerializableCipher.decrypt(
+     *         AESAlgorithm,
+     *         ciphertextParams,
+     *         key, {
+     *             iv: iv,
+     *             format: CryptoJS.format.OpenSSL
+     *         }
+     *     );
+     */
+    static decrypt(
+        cipher: typeof Cipher,
+        ciphertext: CipherParams | string,
+        key: WordArray | string,
+        optionalCfg?: BufferedBlockAlgorithmConfig
+    ): WordArray {
+        // Apply config defaults
+        const cfg = Object.assign({}, this.cfg, optionalCfg);
+
+        if (!cfg.format) {
+            throw new Error("could not determine format");
+        }
+
+        // Convert string to CipherParams
+        ciphertext = this._parse(ciphertext, cfg.format);
+
+        if (!ciphertext.ciphertext) {
+            throw new Error("could not determine ciphertext");
+        }
+
+        // Decrypt
+        return cipher.createDecryptor(key, cfg).finalize(ciphertext.ciphertext);
+    }
+
+    /**
      * Encrypts a message.
      *
      * @param cipher The cipher algorithm to use.
@@ -50,65 +104,11 @@ export class SerializableCipher {
             key: key,
             iv: encryptor.cfg.iv,
             algorithm: cipher,
-            mode: (<any>encryptor.cfg).mode,
-            padding: (<any>encryptor.cfg).padding,
+            mode: encryptor.cfg.mode,
+            padding: encryptor.cfg.padding,
             blockSize: encryptor.cfg.blockSize,
             formatter: config.format
         });
-    }
-
-    /**
-     * Decrypts serialized ciphertext.
-     *
-     * @param cipher The cipher algorithm to use.
-     * @param ciphertext The ciphertext to decrypt.
-     * @param key The key.
-     * @param optionalCfg The configuration options to use for this operation.
-     *
-     * @return The plaintext.
-     *
-     * @example
-     *
-     *     let plaintext = SerializableCipher.decrypt(
-     *         AESAlgorithm,
-     *         formattedCiphertext,
-     *         key, {
-     *             iv: iv,
-     *             format: CryptoJS.format.OpenSSL
-     *         }
-     *     );
-     *
-     *     let plaintext = SerializableCipher.decrypt(
-     *         AESAlgorithm,
-     *         ciphertextParams,
-     *         key, {
-     *             iv: iv,
-     *             format: CryptoJS.format.OpenSSL
-     *         }
-     *     );
-     */
-    public static decrypt(
-        cipher: typeof Cipher,
-        ciphertext: CipherParams | string,
-        key: WordArray | string,
-        optionalCfg?: BufferedBlockAlgorithmConfig
-    ): WordArray {
-        // Apply config defaults
-        const cfg = Object.assign({}, this.cfg, optionalCfg);
-
-        if (!cfg.format) {
-            throw new Error("could not determine format");
-        }
-
-        // Convert string to CipherParams
-        ciphertext = this._parse(ciphertext, cfg.format);
-
-        if (!ciphertext.ciphertext) {
-            throw new Error("could not determine ciphertext");
-        }
-
-        // Decrypt
-        return cipher.createDecryptor(key, cfg).finalize(ciphertext.ciphertext);
     }
 
     /**
@@ -124,7 +124,7 @@ export class SerializableCipher {
      *
      *     var ciphertextParams = CryptoJS.lib.SerializableCipher._parse(ciphertextStringOrParams, format);
      */
-    public static _parse(ciphertext: CipherParams | string, format: Formatter): CipherParams {
+    protected static _parse(ciphertext: CipherParams | string, format: Formatter): CipherParams {
         if (typeof ciphertext === "string") {
             return format.parse(ciphertext);
         }

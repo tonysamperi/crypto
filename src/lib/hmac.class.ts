@@ -1,35 +1,14 @@
-import {Hasher, HasherConstructor} from "./hasher.class.js";
+import {Hasher} from "./hasher.class.js";
+import {HasherConstructor} from "./hasher-constructor.type.js";
 import {WordArray} from "./word-array.class.js";
 import {Utf8} from "../enc/utf8.class.js";
 
 export class HMAC {
     private _hasher: Hasher;
-    private _oKey: WordArray;
     private _iKey: WordArray;
+    private _oKey: WordArray;
 
-    constructor() {
-
-    }
-
-    finalize(messageUpdate?: WordArray | string) {
-        const innerHash = this._hasher.finalize(messageUpdate);
-        // @ts-expect-error this will be used in non-abstract classes
-        return new (this.hasher.constructor as typeof Hasher)()
-            .update(this._oKey)
-            .finalize(innerHash);
-    }
-
-    /**
-     * Initializes a newly created HMAC.
-     *
-     * @param {Hasher} hasher The hash algorithm to use.
-     * @param {WordArray|string} rawKey The secret key.
-     *
-     * @example
-     *
-     *     var hmacHasher = CryptoJS.algo.HMAC.create(CryptoJS.algo.SHA256, key);
-     */
-    init(hasher: HasherConstructor, rawKey: WordArray | string) {
+    constructor(hasher: HasherConstructor, rawKey: WordArray | string) {
         // Init hasher
         this._hasher = new hasher();
         // Convert string to WordArray, else assume WordArray already
@@ -57,15 +36,20 @@ export class HMAC {
 
         // XOR keys with pad constants
         for (let i = 0; i < hasherBlockSize; i++) {
-            oKeyWords[i] ^= 0x5c5c5c5c;
-            iKeyWords[i] ^= 0x36363636;
+            oKeyWords[i] ^= 1549556828;
+            iKeyWords[i] ^= 909522486;
         }
         oKey.sigBytes = iKey.sigBytes = hasherBlockSizeBytes;
 
         // Set initial values
         this.reset();
+    }
 
-        return this;
+    finalize(messageUpdate ?: WordArray | string) {
+        const innerHash = this._hasher.finalize(messageUpdate);
+        this._hasher.reset();
+
+        return this._hasher.finalize(this._oKey.clone().concat(innerHash));
     }
 
     reset() {
