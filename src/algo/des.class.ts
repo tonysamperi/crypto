@@ -1,6 +1,6 @@
 import {BlockCipher} from "../lib/block-cipher.class.js";
 import {WordArray} from "../lib/word-array.class.js";
-import {BufferedBlockAlgorithmConfig} from "../lib/buffered-block-algorithm-config.interface";
+import {BufferedBlockAlgorithmConfig} from "../lib/buffered-block-algorithm-config.interface.js";
 
 /* eslint-disable @typescript-eslint/naming-convention */
 const PC1 = [
