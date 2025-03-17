@@ -3,6 +3,7 @@ import {X64Word} from "../lib/x64-word.class.js";
 import {X64WordArray} from "../lib/x64-word-array.class.js";
 
 // Initialization and round constants tables
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const K: X64Word[] = [
     new X64Word(1116352408, 3609767458),
     new X64Word(1899447441, 602891725),
@@ -85,12 +86,12 @@ const K: X64Word[] = [
     new X64Word(1607167915, 987167468),
     new X64Word(1816402316, 1246189591)
 ];
-
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const W: X64Word[] = [];
 
 // Compute constants
 (function () {
-    for (var i = 0; i < 80; i++) {
+    for (let i = 0; i < 80; i++) {
         W[i] = new X64Word(void 0, void 0);
     }
 })();
@@ -119,55 +120,43 @@ export class SHA512 extends Hasher {
         ]);
     }
 
-    protected _doProcessBlock(M: number[], offset: number) {
-        const H = this._hash.words;
-        const H0 = H[0];
-        const H1 = H[1];
-        const H2 = H[2];
-        const H3 = H[3];
-        const H4 = H[4];
-        const H5 = H[5];
-        const H6 = H[6];
-        const H7 = H[7];
-        const H0h = H0.high;
-        let H0l = H0.low;
-        let H1h = H1.high;
-        let H1l = H1.low;
-        let H2h = H2.high;
-        let H2l = H2.low;
-        let H3h = H3.high;
-        let H3l = H3.low;
-        const H4h = H4.high;
-        let H4l = H4.low;
-        const H5h = H5.high;
-        let H5l = H5.low;
-        const H6h = H6.high;
-        var H6l = H6.low;
-        var H7h = H7.high;
-        var H7l = H7.low;
-        var ah = H0h;
-        var al = H0l;
-        var bh = H1h;
-        var bl = H1l;
-        var ch = H2h;
-        var cl = H2l;
-        var dh = H3h;
-        var dl = H3l;
-        var eh = H4h;
-        var el = H4l;
-        var fh = H5h;
-        var fl = H5l;
-        var gh = H6h;
-        var gl = H6l;
-        var hh = H7h;
-        var hl = H7l;
-        for (var i = 0; i < 80; i++) {
-            var Wil;
-            var Wih;
-            var Wi = W[i];
+    protected _doFinalize() {
+        const data = this._data;
+        const dataWords = data.words;
+        const nBitsTotal = this._nDataBytes * 8;
+        const nBitsLeft = data.sigBytes * 8;
+        dataWords[nBitsLeft >>> 5] |= 128 << 24 - nBitsLeft % 32;
+        dataWords[(nBitsLeft + 128 >>> 10 << 5) + 30] = Math.floor(nBitsTotal / 4294967296);
+        dataWords[(nBitsLeft + 128 >>> 10 << 5) + 31] = nBitsTotal;
+        data.sigBytes = dataWords.length * 4;
+        this._process();
+
+        return this._hash.toX32();
+    }
+
+    protected _doProcessBlock(m: number[], offset: number) {
+        let ah = this._hash.words[0].high;
+        let al = this._hash.words[0].low;
+        let bh = this._hash.words[1].high;
+        let bl = this._hash.words[1].low;
+        let ch = this._hash.words[2].high;
+        let cl = this._hash.words[2].low;
+        let dh = this._hash.words[3].high;
+        let dl = this._hash.words[3].low;
+        let eh = this._hash.words[4].high;
+        let el = this._hash.words[4].low;
+        let fh = this._hash.words[5].high;
+        let fl = this._hash.words[5].low;
+        let gh = this._hash.words[6].high;
+        let gl = this._hash.words[6].low;
+        let hh = this._hash.words[7].high;
+        let hl = this._hash.words[7].low;
+        for (let i = 0; i < 80; i++) {
+            let currentLow;
+            let currentHi;
             if (i < 16) {
-                Wih = Wi.high = M[offset + i * 2] | 0;
-                Wil = Wi.low = M[offset + i * 2 + 1] | 0;
+                currentHi = W[i].high = m[offset + i * 2] | 0;
+                currentLow = W[i].low = m[offset + i * 2 + 1] | 0;
             }
             else {
                 const gamma0x = W[i - 15];
@@ -180,20 +169,14 @@ export class SHA512 extends Hasher {
                 const gamma1xl = gamma1x.low;
                 const gamma1h = (gamma1xh >>> 19 | gamma1xl << 13) ^ (gamma1xh << 3 | gamma1xl >>> 29) ^ gamma1xh >>> 6;
                 const gamma1l = (gamma1xl >>> 19 | gamma1xh << 13) ^ (gamma1xl << 3 | gamma1xh >>> 29) ^ (gamma1xl >>> 6 | gamma1xh << 26);
-                const Wi7 = W[i - 7];
-                const Wi7h = Wi7.high;
-                const Wi7l = Wi7.low;
-                const Wi16 = W[i - 16];
-                const Wi16h = Wi16.high;
-                const Wi16l = Wi16.low;
-                Wil = gamma0l + Wi7l;
-                Wih = gamma0h + Wi7h + (Wil >>> 0 < gamma0l >>> 0 ? 1 : 0);
-                Wil = Wil + gamma1l;
-                Wih = Wih + gamma1h + (Wil >>> 0 < gamma1l >>> 0 ? 1 : 0);
-                Wil = Wil + Wi16l;
-                Wih = Wih + Wi16h + (Wil >>> 0 < Wi16l >>> 0 ? 1 : 0);
-                Wi.high = Wih;
-                Wi.low = Wil;
+                currentLow = gamma0l + W[i - 7].low;
+                currentHi = gamma0h + W[i - 7].high + (currentLow >>> 0 < gamma0l >>> 0 ? 1 : 0);
+                currentLow = currentLow + gamma1l;
+                currentHi = currentHi + gamma1h + (currentLow >>> 0 < gamma1l >>> 0 ? 1 : 0);
+                currentLow = currentLow + W[i - 16].low;
+                currentHi = currentHi + W[i - 16].high + (currentLow >>> 0 < W[i - 16].low >>> 0 ? 1 : 0);
+                W[i].high = currentHi;
+                W[i].low = currentLow;
             }
             const chh = eh & fh ^ ~eh & gh;
             const chl = el & fl ^ ~el & gl;
@@ -203,17 +186,14 @@ export class SHA512 extends Hasher {
             const sigma0l = (al >>> 28 | ah << 4) ^ (al << 30 | ah >>> 2) ^ (al << 25 | ah >>> 7);
             const sigma1h = (eh >>> 14 | el << 18) ^ (eh >>> 18 | el << 14) ^ (eh << 23 | el >>> 9);
             const sigma1l = (el >>> 14 | eh << 18) ^ (el >>> 18 | eh << 14) ^ (el << 23 | eh >>> 9);
-            const Ki = K[i];
-            const Kih = Ki.high;
-            const Kil = Ki.low;
             let t1l = hl + sigma1l;
             let t1h = hh + sigma1h + (t1l >>> 0 < hl >>> 0 ? 1 : 0);
             t1l = t1l + chl;
             t1h = t1h + chh + (t1l >>> 0 < chl >>> 0 ? 1 : 0);
-            t1l = t1l + Kil;
-            t1h = t1h + Kih + (t1l >>> 0 < Kil >>> 0 ? 1 : 0);
-            t1l = t1l + Wil;
-            t1h = t1h + Wih + (t1l >>> 0 < Wil >>> 0 ? 1 : 0);
+            t1l = t1l + K[i].low;
+            t1h = t1h + K[i].high + (t1l >>> 0 < K[i].low >>> 0 ? 1 : 0);
+            t1l = t1l + currentLow;
+            t1h = t1h + currentHi + (t1l >>> 0 < currentLow >>> 0 ? 1 : 0);
             const t2l = sigma0l + majl;
             const t2h = sigma0h + majh + (t2l >>> 0 < sigma0l >>> 0 ? 1 : 0);
             hh = gh;
@@ -233,35 +213,22 @@ export class SHA512 extends Hasher {
             al = t1l + t2l | 0;
             ah = t1h + t2h + (al >>> 0 < t1l >>> 0 ? 1 : 0) | 0;
         }
-        H0l = H0.low = H0l + al;
-        H0.high = H0h + ah + (H0l >>> 0 < al >>> 0 ? 1 : 0);
-        H1l = H1.low = H1l + bl;
-        H1.high = H1h + bh + (H1l >>> 0 < bl >>> 0 ? 1 : 0);
-        H2l = H2.low = H2l + cl;
-        H2.high = H2h + ch + (H2l >>> 0 < cl >>> 0 ? 1 : 0);
-        H3l = H3.low = H3l + dl;
-        H3.high = H3h + dh + (H3l >>> 0 < dl >>> 0 ? 1 : 0);
-        H4l = H4.low = H4l + el;
-        H4.high = H4h + eh + (H4l >>> 0 < el >>> 0 ? 1 : 0);
-        H5l = H5.low = H5l + fl;
-        H5.high = H5h + fh + (H5l >>> 0 < fl >>> 0 ? 1 : 0);
-        H6l = H6.low = H6l + gl;
-        H6.high = H6h + gh + (H6l >>> 0 < gl >>> 0 ? 1 : 0);
-        H7l = H7.low = H7l + hl;
-        H7.high = H7h + hh + (H7l >>> 0 < hl >>> 0 ? 1 : 0);
+        this._hash.words[0].low = this._hash.words[0].low = this._hash.words[0].low + al;
+        this._hash.words[0].high = this._hash.words[0].high + ah + (this._hash.words[0].low >>> 0 < al >>> 0 ? 1 : 0);
+        this._hash.words[1].low = this._hash.words[1].low = this._hash.words[1].low + bl;
+        this._hash.words[1].high = this._hash.words[1].high + bh + (this._hash.words[1].low >>> 0 < bl >>> 0 ? 1 : 0);
+        this._hash.words[2].low = this._hash.words[2].low = this._hash.words[2].low + cl;
+        this._hash.words[2].high = this._hash.words[2].high + ch + (this._hash.words[2].low >>> 0 < cl >>> 0 ? 1 : 0);
+        this._hash.words[3].low = this._hash.words[3].low = this._hash.words[3].low + dl;
+        this._hash.words[3].high = this._hash.words[3].high + dh + (this._hash.words[3].low >>> 0 < dl >>> 0 ? 1 : 0);
+        this._hash.words[4].low = this._hash.words[4].low = this._hash.words[4].low + el;
+        this._hash.words[4].high = this._hash.words[4].high + eh + (this._hash.words[4].low >>> 0 < el >>> 0 ? 1 : 0);
+        this._hash.words[5].low = this._hash.words[5].low = this._hash.words[5].low + fl;
+        this._hash.words[5].high = this._hash.words[5].high + fh + (this._hash.words[5].low >>> 0 < fl >>> 0 ? 1 : 0);
+        this._hash.words[6].low = this._hash.words[6].low = this._hash.words[6].low + gl;
+        this._hash.words[6].high = this._hash.words[6].high + gh + (this._hash.words[6].low >>> 0 < gl >>> 0 ? 1 : 0);
+        this._hash.words[7].low = this._hash.words[7].low = this._hash.words[7].low + hl;
+        this._hash.words[7].high = this._hash.words[7].high + hh + (this._hash.words[7].low >>> 0 < hl >>> 0 ? 1 : 0);
     }
 
-    protected _doFinalize() {
-        const data = this._data;
-        var dataWords = data.words;
-        var nBitsTotal = this._nDataBytes * 8;
-        var nBitsLeft = data.sigBytes * 8;
-        dataWords[nBitsLeft >>> 5] |= 128 << 24 - nBitsLeft % 32;
-        dataWords[(nBitsLeft + 128 >>> 10 << 5) + 30] = Math.floor(nBitsTotal / 4294967296);
-        dataWords[(nBitsLeft + 128 >>> 10 << 5) + 31] = nBitsTotal;
-        data.sigBytes = dataWords.length * 4;
-        this._process();
-
-        return this._hash.toX32();
-    }
 }

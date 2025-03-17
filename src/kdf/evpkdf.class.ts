@@ -55,7 +55,7 @@ export class EVPKDF implements AbstractKDF {
      */
     compute(password: WordArray | string, salt: WordArray | string): WordArray {
         // Init hasher
-        const hasher = new (<any>this.cfg.hasher)();
+        const hasher = new (this.cfg.hasher as any)();
 
         // Initial values
         const derivedKey = new WordArray();

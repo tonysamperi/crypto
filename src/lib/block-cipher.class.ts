@@ -60,7 +60,7 @@ export abstract class BlockCipher extends Cipher {
 
         // Finalize
         let finalProcessedBlocks;
-        if (this._xformMode === (<typeof BlockCipher>this.constructor)._ENC_XFORM_MODE) {
+        if (this._xformMode === (this.constructor as typeof BlockCipher)._ENC_XFORM_MODE) {
             // Check if we have a blockSize
             if (this.cfg.blockSize === undefined) {
                 throw new Error("missing blockSize in config");

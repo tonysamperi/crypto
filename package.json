@@ -38,6 +38,7 @@
         "build": "npm run clean && NODE_ENV=production node build.config.mjs",
         "clean": "rimraf dist",
         "lint": "eslint && tsc --noEmit",
+        "lint:fix": "eslint --fix",
         "publish:beta": "npm publish --tag beta",
         "publish:next": "npm publish --tag next",
         "test": "jest"

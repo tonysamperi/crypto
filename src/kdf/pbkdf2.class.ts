@@ -41,7 +41,7 @@ export class PBKDF2 implements AbstractKDF {
         const iterations = cfg.iterations;
 
         while (derivedKeyWords.length < keySize) {
-            let block = hmac.update(salt).finalize(blockIndex);
+            const block = hmac.update(salt).finalize(blockIndex);
             hmac.reset();
             const blockWords = block.words;
             const blockWordsLength = blockWords.length;
