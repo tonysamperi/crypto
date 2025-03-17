@@ -159,9 +159,8 @@ export default tsEslint.config({
             "node_modules/**/*",
             "dist/**/*",
             "test/**/*",
-            "./gulpfile*",
-            "./build.config*",
-            "./jest*"
+            "build*.config.mjs",
+            "jest*.mjs"
         ]
     },
     {
