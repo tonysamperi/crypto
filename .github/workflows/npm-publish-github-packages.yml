@@ -20,6 +20,7 @@ jobs:
             -   run: yarn install
             -   run: npm run build
             -   run: |
+                    is_first_release=false
                     pkgname=$(node -p "require('./package.json').name")
                     pkgversion=$(node -p -e "require('./package.json').version")
                     prerelease=$(node -p "require('./package.json').version.split('-')[1]?.split('.')[0] || ''")
@@ -27,6 +28,7 @@ jobs:
                   
                     if npm view "$pkgname" > /dev/null 2>&1; then
                       echo "Package $pkgname is published. Checking dist-tags..."
+                    
                       if npm dist-tag ls "$pkgname" | grep -q '^next:'; then
                         if [[ "$pkgversion" =~ \.0\.0$ ]]; then
                           echo "New major version detected. Removing 'next' dist-tag..."
@@ -36,13 +38,18 @@ jobs:
                         echo "No 'next' dist-tag found, skipping removal."
                       fi
                     else
-                      echo "Package $pkgname not published yet. Skipping dist-tag check."
-                    fi
-                    
+                      echo "Package $pkgname not published yet. Setting first release flag."
+                      is_first_release=true
+                    fi                    
                     if [[ -n "$prerelease" ]]; then
-                        npm run "publish:$prerelease"
+                      npm run "publish:$prerelease"
                     else
+                      if [[ "$is_first_release" == true ]]; then
+                        echo "First release detected. Using --access public."
+                        npm publish --access public
+                      else
                         npm publish
+                      fi
                     fi
                 env:
                     NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
