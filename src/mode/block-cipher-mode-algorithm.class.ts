@@ -6,7 +6,7 @@ export abstract class BlockCipherModeAlgorithm {
     // eslint-disable-next-line @typescript-eslint/naming-convention
     __creator: ((cipher: BlockCipher, iv: number[]) => BlockCipherMode) | undefined;
 
-    protected _cipher!: BlockCipher;
+    protected _cipher: BlockCipher;
     protected _iv: number[] | undefined;
 
     constructor(cipher: BlockCipher, iv: number[]) {

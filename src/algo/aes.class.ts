@@ -70,20 +70,21 @@ const INV_SUB_MIX_3: number[] = [];
 
 // Precomputed Rcon lookup
 const RCON = [0x00, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36];
-
 /* eslint-enable @typescript-eslint/naming-convention */
+
 export class AES extends BlockCipher {
-    // 256 / 32
-    static keySize = 8;
+
+    static keySize = 256 / 32;
 
     protected _invKeySchedule!: number[];
-    protected _key!: WordArray;
+    protected _key: WordArray;
     protected _keyPriorReset!: WordArray;
     protected _keySchedule!: number[];
     protected _nRounds!: number;
 
     constructor(xformMode: number, key: WordArray, cfg?: BufferedBlockAlgorithmConfig) {
         super(xformMode, key, cfg);
+        super.reset();
     }
 
     decryptBlock(m: number[], offset: number) {

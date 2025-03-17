@@ -1,4 +1,4 @@
-import {Hex, PBKDF2, SHA1, aesHelper, Utf8, CBC, PKCS7, Encoder} from "../../src";
+import {Hex, PBKDF2, SHA1, aesHelper, Utf8, CBC, PKCS7, Encoder, WordArray} from "../../src";
 import cry from "../crypto-js.js";
 
 describe("AES_MC", () => {
@@ -17,14 +17,15 @@ describe("AES_MC", () => {
         tonyHelper: aesHelperBuilder(aesHelper, Hex, CBC, PKCS7, Utf8, SHA1, PBKDF2.execute)
     };
 
-    it("should generate AES", () => {
-        const item = _ctx.pairs[0];
-        const cryptoJsKey = _ctx.cryHelper.encryptAES(item.email, _ctx.aesConfig.password, _ctx.aesConfig.salt, _ctx.aesConfig.initVector);
-        const tonyKey = _ctx.tonyHelper.encryptAES(item.email, _ctx.aesConfig.password, _ctx.aesConfig.salt, _ctx.aesConfig.initVector);
-        expect(cryptoJsKey).toEqual(item.hash);
-        expect(tonyKey).toEqual(item.hash);
-        expect(_ctx.cryHelper.decryptAES(cryptoJsKey, _ctx.aesConfig.password, _ctx.aesConfig.salt, _ctx.aesConfig.initVector)).toEqual(item.email);
-        expect(_ctx.tonyHelper.decryptAES(tonyKey, _ctx.aesConfig.password, _ctx.aesConfig.salt, _ctx.aesConfig.initVector)).toEqual(item.email);
+    it("should handle AES", () => {
+        for(const item of _ctx.pairs) {
+            const cryptoJsKey = _ctx.cryHelper.encryptAES(item.email, _ctx.aesConfig.password, _ctx.aesConfig.salt, _ctx.aesConfig.initVector);
+            const tonyKey = _ctx.tonyHelper.encryptAES(item.email, _ctx.aesConfig.password, _ctx.aesConfig.salt, _ctx.aesConfig.initVector);
+            expect(cryptoJsKey).toEqual(item.hash);
+            expect(tonyKey).toEqual(item.hash);
+            expect(_ctx.cryHelper.decryptAES(cryptoJsKey, _ctx.aesConfig.password, _ctx.aesConfig.salt, _ctx.aesConfig.initVector)).toEqual(item.email);
+            expect(_ctx.tonyHelper.decryptAES(tonyKey, _ctx.aesConfig.password, _ctx.aesConfig.salt, _ctx.aesConfig.initVector)).toEqual(item.email);
+        }
     });
 });
 
@@ -39,7 +40,7 @@ function aesHelperBuilder(
     Pkcs7: any,
     Utf8: Encoder,
     SHA1: any,
-    PBKDF2: any
+    PBKDF2: (password: any, salt: any, options: any) => WordArray
 ) {
 
     function buildKey(password: string, salt: string) {

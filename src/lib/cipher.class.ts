@@ -131,11 +131,10 @@ export abstract class Cipher extends BufferedBlockAlgorithm {
      *     let cipher = AES.createEncryptor(keyWordArray, { iv: ivWordArray });
      */
     static createEncryptor(key: WordArray | string, cfg?: BufferedBlockAlgorithmConfig): Cipher {
-        // workaround for typescript not being able to create a abstract creator function directly
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const thisClass: any = this;
+        // workaround for typescript not being able to create an abstract creator function directly
 
-        return new thisClass(this._ENC_XFORM_MODE, key, cfg);
+        // @ts-expect-error this method will never run on the abstract
+        return new this(this._ENC_XFORM_MODE, key, cfg);
     }
 
     /**

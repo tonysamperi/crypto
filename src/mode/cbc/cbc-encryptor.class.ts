@@ -45,12 +45,9 @@ export class CBCEncryptor extends BlockCipherModeAlgorithm {
             block = this._prevBlock;
         }
 
-        // block should never be undefined but we want to make typescript happy
-        if (block !== undefined) {
-            // XOR blocks
-            for (let i = 0; i < blockSize; i++) {
-                words[offset + i] ^= block[i];
-            }
+        // XOR blocks
+        for (let i = 0; i < blockSize; i++) {
+            words[offset + i] ^= block[i];
         }
     }
 }

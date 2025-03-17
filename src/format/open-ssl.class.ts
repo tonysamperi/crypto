@@ -4,7 +4,6 @@ import {Base64} from "../enc/base64.class.js";
 
 export class OpenSSL {
 
-
     /**
      * Converts an OpenSSL-compatible string to a cipher params object.
      *

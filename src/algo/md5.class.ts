@@ -28,17 +28,17 @@ export class MD5 extends Hasher {
         return ((n << s) | (n >>> (32 - s))) + b;
     }
 
-    public static HH(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
+    static HH(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
         const n = a + (b ^ c ^ d) + x + t;
         return ((n << s) | (n >>> (32 - s))) + b;
     }
 
-    public static II(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
+    static II(a: number, b: number, c: number, d: number, x: number, s: number, t: number): number {
         const n = a + (c ^ (b | ~d)) + x + t;
         return ((n << s) | (n >>> (32 - s))) + b;
     }
 
-    public reset() {
+    reset() {
         // reset core values
         super.reset();
 

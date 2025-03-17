@@ -28,7 +28,7 @@ export class CipherParams {
      *         key: keyWordArray,
      *         iv: ivWordArray,
      *         salt: saltWordArray,
-     *         algorithm: AESAlgorithm,
+     *         algorithm: AES,
      *         mode: CBC,
      *         padding: PKCS7,
      *         blockSize: 4,

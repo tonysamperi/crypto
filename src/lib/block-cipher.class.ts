@@ -7,7 +7,7 @@ import {PKCS7} from "../pad/pkcs7.class.js";
 
 export abstract class BlockCipher extends Cipher {
 
-    protected _mode!: BlockCipherModeAlgorithm;
+    protected _mode: BlockCipherModeAlgorithm;
 
     constructor(xformMode: number, key: WordArray, cfg?: BufferedBlockAlgorithmConfig) {
         super(xformMode, key, Object.assign({
