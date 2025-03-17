@@ -1,7 +1,7 @@
 # crypto
 TypeScript library of crypto standards.
 
-[![MIT License][license-image]][license] [![Build Status][gh-actions-image]][gh-actions-url] ![[NPM version][npm-version-image]][npm-url] ![PRs welcome][contributing-image]
+[![MIT Licence][licence-image]][license] [![Build Status][gh-actions-image]][gh-actions-url] ![[NPM version][npm-version-image]][npm-url] ![PRs welcome][contributing-image]
 [![Size](https://img.shields.io/bundlephobia/minzip/@tonysamperi/crypto)](https://unpkg.com/@tonysamperi/crypto@latest/dist/cjs/index.cjs)
 
 I've been using crypto-js, but it was recently discontinued.
@@ -40,12 +40,15 @@ The beta releases instead, like it's always been, represent **unstable** release
 I started with a few features that I personally need, but I will migrate others once a while.
 One that I have in mind is TripleDES.
 
-### HASHING
+### ALGORITHMS (including helpers to simplify usage)
 
-* md5
-* sha1
-* sha256
-* sha512
+* AES
+* DES
+* MD5
+* SHA1
+* SHA256
+* SHA512
+* TripleDES
 
 ### KDF
 
@@ -54,22 +57,23 @@ One that I have in mind is TripleDES.
 
 ### ENCODING
 
-* latin1
-* utf8
-* hex
 * base64
+* hex
+* latin1
+* utf16
+* utf8
 
 ### MODE
 
-* ECB
 * CBC
 * CTR
+* ECB
 
 ### PADDING
 
+* nopadding
 * pkcs7
 * zeropadding
-* nopadding
 
 ## Usage
 
@@ -93,8 +97,8 @@ COMING SOON
 
 ## Development
 
-[license-image]: https://img.shields.io/badge/license-MIT-blue.svg
-[license]: LICENSE
+[licence-image]: https://img.shields.io/badge/license-MIT-blue.svg
+[licence]: LICENCE
 
 [gh-actions-url]: https://github.com/tonysamperi/crypto/actions?query=workflow%3A%22Test%22
 [gh-actions-image]: https://github.com/tonysamperi/crypto/workflows/Test/badge.svg?branch=master
