@@ -4,10 +4,11 @@ import {BufferedBlockAlgorithmConfig} from "./buffered-block-algorithm-config.in
 
 export abstract class BufferedBlockAlgorithm {
 
-    protected _minBufferSize = 0;
-    protected _data: WordArray;
-    protected _nDataBytes: number;
     cfg: BufferedBlockAlgorithmConfig;
+
+    protected _data: WordArray;
+    protected _minBufferSize = 0;
+    protected _nDataBytes: number;
 
     protected abstract _doProcessBlock(wordArray: number[], offset: number): void;
 
@@ -19,6 +20,29 @@ export abstract class BufferedBlockAlgorithm {
         // Initial values
         this._data = new WordArray();
         this._nDataBytes = 0;
+    }
+
+    /**
+     * Creates a copy of this object.
+     *
+     * @return The clone.
+     *
+     * @example
+     *
+     *     let clone = bufferedBlockAlgorithm.clone();
+     */
+    clone(): BufferedBlockAlgorithm {
+        const clone = this.constructor();
+
+        for (const attr in this) {
+            if (Object.prototype.hasOwnProperty.call(this, attr)) {
+                clone[attr] = this[attr];
+            }
+        }
+
+        clone._data = this._data.clone();
+
+        return clone;
     }
 
     /**
@@ -44,7 +68,7 @@ export abstract class BufferedBlockAlgorithm {
      *     bufferedBlockAlgorithm._append('data');
      *     bufferedBlockAlgorithm._append(wordArray);
      */
-    _append(data: string | WordArray) {
+    protected _append(data: string | WordArray) {
         // Convert string to WordArray, else assume WordArray already
         if (typeof data === "string") {
             data = Utf8.parse(data);
@@ -69,7 +93,7 @@ export abstract class BufferedBlockAlgorithm {
      *     let processedData = bufferedBlockAlgorithm._process();
      *     let processedData = bufferedBlockAlgorithm._process(!!'flush');
      */
-    _process(doFlush?: boolean): WordArray {
+    protected _process(doFlush?: boolean): WordArray {
         if (!this.cfg.blockSize) {
             throw new Error("missing blockSize in config");
         }
@@ -112,26 +136,4 @@ export abstract class BufferedBlockAlgorithm {
         return new WordArray(processedWords, nBytesReady);
     }
 
-    /**
-     * Creates a copy of this object.
-     *
-     * @return The clone.
-     *
-     * @example
-     *
-     *     let clone = bufferedBlockAlgorithm.clone();
-     */
-    clone(): BufferedBlockAlgorithm {
-        const clone = this.constructor();
-
-        for (const attr in this) {
-            if (this.hasOwnProperty(attr)) {
-                clone[attr] = this[attr];
-            }
-        }
-
-        clone._data = this._data.clone();
-
-        return clone;
-    }
 }

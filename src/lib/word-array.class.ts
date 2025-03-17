@@ -1,48 +1,9 @@
 import {Hex} from "../enc/hex.class.js";
 
 export class WordArray {
-    words: number[];
 
     sigBytes: number;
-
-    /**
-     * Creates a word array filled with random bytes.
-     *
-     * @param nBytes The number of random bytes to generate.
-     *
-     * @return The random word array.
-     *
-     * @example
-     *
-     *     let wordArray = WordArray.random(16);
-     */
-    public static random(nBytes: number) {
-        const words = [];
-
-        const r = (function (m_w: number) {
-            let m_z = 0x3ade68b1;
-
-            const mask = 0xffffffff;
-
-            return function () {
-                m_z = (0x9069 * (m_z & 0xFFFF) + (m_z >> 0x10)) & mask;
-                m_w = (0x4650 * (m_w & 0xFFFF) + (m_w >> 0x10)) & mask;
-                let result = ((m_z << 0x10) + m_w) & mask;
-                result /= 0x100000000;
-                result += 0.5;
-                return result * (Math.random() > .5 ? 1 : -1);
-            };
-        });
-
-        for (let i = 0, rcache; i < nBytes; i += 4) {
-            const _r = r((rcache || Math.random()) * 0x100000000);
-
-            rcache = _r() * 0x3ade67b7;
-            words.push((_r() * 0x100000000) | 0);
-        }
-
-        return new WordArray(words, nBytes);
-    }
+    words: number[];
 
     /**
      * Initializes a newly created word array.
@@ -68,21 +29,70 @@ export class WordArray {
     }
 
     /**
-     * Converts this word array to a string.
+     * Creates a word array filled with random bytes.
      *
-     * @param encoder (Optional) The encoding strategy to use. Default: CryptoJS.enc.Hex
+     * @param nBytes The number of random bytes to generate.
      *
-     * @return The stringified word array.
+     * @return The random word array.
      *
      * @example
      *
-     *     let string = wordArray + '';
-     *     let string = wordArray.toString();
-     *     let string = wordArray.toString(CryptoJS.enc.Utf8);
+     *     let wordArray = WordArray.random(16);
      */
-    toString<T extends { stringify: (arg: WordArray) => string }>(encoder?: T): string {
-        return (encoder || Hex).stringify(this);
+    static random(nBytes: number) {
+        const words = [];
+
+        const r = (function (mw: number) {
+            let mz = 0x3ade68b1;
+
+            const mask = 0xffffffff;
+
+            return function () {
+                mz = (0x9069 * (mz & 0xFFFF) + (mz >> 0x10)) & mask;
+                mw = (0x4650 * (mw & 0xFFFF) + (mw >> 0x10)) & mask;
+                let result = ((mz << 0x10) + mw) & mask;
+                result /= 0x100000000;
+                result += 0.5;
+                return result * (Math.random() > .5 ? 1 : -1);
+            };
+        });
+
+        for (let i = 0, rcache; i < nBytes; i += 4) {
+            const rnd1 = r((rcache || Math.random()) * 0x100000000);
+
+            rcache = rnd1() * 0x3ade67b7;
+            words.push((rnd1() * 0x100000000) | 0);
+        }
+
+        return new WordArray(words, nBytes);
     }
+
+    /**
+     * Removes insignificant bits.
+     *
+     * @example
+     *
+     *     wordArray.clamp();
+     */
+    clamp() {
+        // Clamp
+        this.words[this.sigBytes >>> 2] &= 0xffffffff << (32 - (this.sigBytes % 4) * 8);
+        this.words.length = Math.ceil(this.sigBytes / 4);
+    }
+
+    /**
+     * Creates a copy of this word array.
+     *
+     * @return The clone.
+     *
+     * @example
+     *
+     *     let clone = wordArray.clone();
+     */
+    clone(): WordArray {
+        return new WordArray(this.words.slice(0), this.sigBytes);
+    }
+
 
     /**
      * Concatenates a word array to this word array.
@@ -120,28 +130,19 @@ export class WordArray {
     }
 
     /**
-     * Removes insignificant bits.
+     * Converts this word array to a string.
+     *
+     * @param encoder (Optional) The encoding strategy to use. Default: CryptoJS.enc.Hex
+     *
+     * @return The stringified word array.
      *
      * @example
      *
-     *     wordArray.clamp();
+     *     let string = wordArray + '';
+     *     let string = wordArray.toString();
+     *     let string = wordArray.toString(CryptoJS.enc.Utf8);
      */
-    clamp() {
-        // Clamp
-        this.words[this.sigBytes >>> 2] &= 0xffffffff << (32 - (this.sigBytes % 4) * 8);
-        this.words.length = Math.ceil(this.sigBytes / 4);
-    }
-
-    /**
-     * Creates a copy of this word array.
-     *
-     * @return The clone.
-     *
-     * @example
-     *
-     *     let clone = wordArray.clone();
-     */
-    clone(): WordArray {
-        return new WordArray(this.words.slice(0), this.sigBytes);
+    toString<T extends { stringify: (arg: WordArray) => string }>(encoder?: T): string {
+        return (encoder || Hex).stringify(this);
     }
 }

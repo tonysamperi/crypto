@@ -13,7 +13,7 @@ export class ZeroPadding implements AbstractPadding {
      *     ZeroPadding.pad(wordArray, 4);
      */
     static pad(data: WordArray, blockSize: number): void {
-        var blockSizeBytes = blockSize * 4;
+        const blockSizeBytes = blockSize * 4;
         data.clamp();
         data.sigBytes += blockSizeBytes - (data.sigBytes % blockSizeBytes || blockSizeBytes);
     }
@@ -28,7 +28,7 @@ export class ZeroPadding implements AbstractPadding {
      *     ZeroPadding.unpad(wordArray);
      */
     static unpad(data: WordArray): void {
-        var dataWords = data.words;
+        const dataWords = data.words;
         for (let i = data.sigBytes - 1; i >= 0; i--) {
             if (dataWords[i >>> 2] >>> 24 - i % 4 * 8 & 255) {
                 data.sigBytes = i + 1;

@@ -25,5 +25,5 @@ try {
     doBuild();
 }
 catch (e) {
-    console.error("Error");
+    console.error("Error", e);
 }

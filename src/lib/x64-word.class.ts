@@ -3,20 +3,31 @@ export class X64Word {
                 public low: number) {
     }
 
-    not(): X64Word {
-        return new X64Word(~this.high, ~this.low);
+    add(word: X64Word): X64Word {
+        const low = (this.low + word.low) | 0;
+        const carry = (low >>> 0) < (this.low >>> 0) ? 1 : 0;
+        const high = (this.high + word.high + carry) | 0;
+        return new X64Word(high, low);
     }
 
     and(word: X64Word): X64Word {
         return new X64Word(this.high & word.high, this.low & word.low);
     }
 
+    not(): X64Word {
+        return new X64Word(~this.high, ~this.low);
+    }
+
     or(word: X64Word): X64Word {
         return new X64Word(this.high | word.high, this.low | word.low);
     }
 
-    xor(word: X64Word): X64Word {
-        return new X64Word(this.high ^ word.high, this.low ^ word.low);
+    rotL(n: number): X64Word {
+        return this.shiftL(n).or(this.shiftR(64 - n));
+    }
+
+    rotR(n: number): X64Word {
+        return this.shiftR(n).or(this.shiftL(64 - n));
     }
 
     shiftL(n: number): X64Word {
@@ -37,18 +48,7 @@ export class X64Word {
         }
     }
 
-    rotL(n: number): X64Word {
-        return this.shiftL(n).or(this.shiftR(64 - n));
-    }
-
-    rotR(n: number): X64Word {
-        return this.shiftR(n).or(this.shiftL(64 - n));
-    }
-
-    add(word: X64Word): X64Word {
-        const low = (this.low + word.low) | 0;
-        const carry = (low >>> 0) < (this.low >>> 0) ? 1 : 0;
-        const high = (this.high + word.high + carry) | 0;
-        return new X64Word(high, low);
+    xor(word: X64Word): X64Word {
+        return new X64Word(this.high ^ word.high, this.low ^ word.low);
     }
 }
