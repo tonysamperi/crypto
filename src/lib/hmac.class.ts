@@ -5,8 +5,8 @@ import {Utf8} from "../enc/utf8.class.js";
 
 export class HMAC {
     private _hasher: Hasher;
-    private _oKey: WordArray;
     private _iKey: WordArray;
+    private _oKey: WordArray;
 
     constructor(hasher: HasherConstructor, rawKey: WordArray | string) {
         // Init hasher

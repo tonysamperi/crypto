@@ -35,7 +35,8 @@ export abstract class Hasher extends BufferedBlockAlgorithm {
      *
      *     const SHA256 = Hasher._createHelper(SHA256);
      */
-    protected static _createHelper<T extends Hasher = Hasher>(hasher: HasherConstructor<T>): (message: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) => WordArray {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    static _createHelper<T extends Hasher = Hasher>(hasher: HasherConstructor<T>): (message: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) => WordArray {
         function helper(message: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) {
             const hasherClass: any = hasher;
 
