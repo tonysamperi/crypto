@@ -1,10 +1,10 @@
 {
     "name": "@tonysamperi/crypto",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "author": "Tony Samperi",
     "description": "Modern tree-shakeable TypeScript version of crypto-js",
     "type": "module",
-    "types": "./dist/esm/index.d.cts",
+    "types": "./dist/esm/index.d.ts",
     "main": "./dist/cjs/index.cjs",
     "module": "./dist/esm/index.js",
     "unpkg": "./dist/cjs/index.cjs",
