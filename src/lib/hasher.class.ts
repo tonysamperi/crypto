@@ -2,6 +2,7 @@ import {BufferedBlockAlgorithm} from "./buffered-block-algorithm.class.js";
 import {BufferedBlockAlgorithmConfig} from "./buffered-block-algorithm-config.interface.js";
 import {WordArray} from "./word-array.class.js";
 import {HasherConstructor} from "./hasher-constructor.type.js";
+import {HasherHelper} from "./hasher-helper.type.js";
 
 export abstract class Hasher extends BufferedBlockAlgorithm {
 
@@ -36,11 +37,9 @@ export abstract class Hasher extends BufferedBlockAlgorithm {
      *     const SHA256 = Hasher._createHelper(SHA256);
      */
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    static _createHelper<T extends Hasher = Hasher>(hasher: HasherConstructor<T>): (message: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) => WordArray {
-        function helper(message: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) {
-            const hasherClass: any = hasher;
-
-            const hasherInstance: T = new hasherClass(cfg);
+    static _createHelper<T extends Hasher = Hasher>(hasher: HasherConstructor<T>): HasherHelper {
+        function helper(message: WordArray | string, cfg?: BufferedBlockAlgorithmConfig): WordArray {
+            const hasherInstance: T = new hasher(cfg);
 
             return hasherInstance.finalize(message);
         }

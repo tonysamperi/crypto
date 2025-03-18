@@ -1,9 +1,7 @@
 import {BufferedBlockAlgorithm} from "./buffered-block-algorithm.class.js";
 import {WordArray} from "./word-array.class.js";
-import {SerializableCipher} from "./serializable-cipher.class.js";
-import {PasswordBasedCipher} from "./password-based-cipher.class.js";
 import {BufferedBlockAlgorithmConfig} from "./buffered-block-algorithm-config.interface.js";
-import {CipherParams} from "./cipher-params.class.js";
+import {CipherHelper} from "./cipher-helper.class.js";
 
 export abstract class Cipher extends BufferedBlockAlgorithm {
 
@@ -74,28 +72,8 @@ export abstract class Cipher extends BufferedBlockAlgorithm {
      */
     // eslint-disable-next-line @typescript-eslint/naming-convention
     static _createHelper(cipher: typeof Cipher) {
-        function encrypt(message: WordArray | string, key: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) {
-            if (typeof key === "string") {
-                return PasswordBasedCipher.encrypt(cipher, message, key, cfg);
-            }
-            else {
-                return SerializableCipher.encrypt(cipher, message, key, cfg);
-            }
-        }
 
-        function decrypt(ciphertext: CipherParams | string, key: WordArray | string, cfg?: BufferedBlockAlgorithmConfig) {
-            if (typeof key === "string") {
-                return PasswordBasedCipher.decrypt(cipher, ciphertext, key, cfg);
-            }
-            else {
-                return SerializableCipher.decrypt(cipher, ciphertext, key, cfg);
-            }
-        }
-
-        return {
-            encrypt: encrypt,
-            decrypt: decrypt
-        };
+        return new CipherHelper(cipher);
     }
 
     /**

@@ -1,6 +1,7 @@
 import {Hasher} from "../lib/hasher.class.js";
 import {X64Word} from "../lib/x64-word.class.js";
 import {X64WordArray} from "../lib/x64-word-array.class.js";
+import {WordArray} from "../lib/word-array.class.js";
 
 // Initialization and round constants tables
 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -120,7 +121,7 @@ export class SHA512 extends Hasher {
         ]);
     }
 
-    protected _doFinalize() {
+    protected _doFinalize(): WordArray {
         const data = this._data;
         const dataWords = data.words;
         const nBitsTotal = this._nDataBytes * 8;
