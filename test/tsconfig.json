@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "target": "ESNext",
+        "sourceMap": true,
+        "esModuleInterop": true,
+        "rootDir": "./",
+        "baseUrl": "./"
+    },
+    "include": [
+        "../src"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
