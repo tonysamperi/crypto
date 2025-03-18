@@ -159,7 +159,7 @@ export default tsEslint.config({
             "node_modules/**/*",
             "dist/**/*",
             "test/**/*",
-            "build*.config.mjs",
+            "build*.config.js",
             "jest*.mjs"
         ]
     },
