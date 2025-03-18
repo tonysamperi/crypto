@@ -7,6 +7,6 @@
         "target": "es6",
         "moduleResolution": "NodeNext",
         "outDir": "dist/raw-esm",
-        "declarationDir": "dist/types"
+        "declarationDir": "dist/raw-types"
     }
 }
