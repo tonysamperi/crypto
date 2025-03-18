@@ -1,8 +1,11 @@
 # crypto
 TypeScript library of crypto standards.
 
-[![MIT Licence][licence-image]][license] [![Build Status][gh-actions-image]][gh-actions-url] ![[NPM version][npm-version-image]][npm-url] ![PRs welcome][contributing-image]
-[![Size](https://img.shields.io/bundlephobia/minzip/@tonysamperi/crypto)](https://unpkg.com/@tonysamperi/crypto@latest/dist/cjs/index.cjs)
+[![MIT Licence][licence-image]][licence]
+[![NPM version][npm-version-image]][npm-url]
+![PRs welcome][contributing-image]
+[![Size][size]][size-url]
+[![Build Status][gh-actions-image]][gh-actions-url]
 
 I've been using crypto-js, but it was recently discontinued.
 It's not for that reason, but let's be honest: you always hated it for its typings.
@@ -97,14 +100,16 @@ COMING SOON
 
 ## Development
 
-[licence-image]: https://img.shields.io/badge/license-MIT-blue.svg
+[size]: https://img.shields.io/bundlephobia/minzip/@tonysamperi/crypto
+[size-url]: https://unpkg.com/@tonysamperi/crypto@latest/dist/cjs/index.cjs
+[licence-image]: https://img.shields.io/badge/licence-MIT-blue.svg
 [licence]: LICENCE
 
 [gh-actions-url]: https://github.com/tonysamperi/crypto/actions?query=workflow%3A%22Test%22
 [gh-actions-image]: https://github.com/tonysamperi/crypto/workflows/Test/badge.svg?branch=master
 
-[npm-url]: https://npmjs.org/package/@tonysamperi/crypto
-[npm-version-image]: https://badge.fury.io/js/@tonysamperi/crypto.svg
+[npm-url]: https://npmjs.org/package/@tonysamperi%2Fcrypto
+[npm-version-image]: https://badge.fury.io/js/@tonysamperi%2Fcrypto.svg
 
 [doc-url]: https://tonysamperi.github.io/crypto/
 
