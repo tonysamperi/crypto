@@ -106,7 +106,7 @@ COMING SOON
 
 [contributing-image]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
 
-[gh-actions-url]: https://github.com/tonysamperi/krypto/actions?query=workflow%3A%22Test%22
+[gh-actions-url]: https://github.com/tonysamperi/krypto/actions/workflows/test.yml/badge.svg
 [gh-actions-image]: https://github.com/tonysamperi/krypto/workflows/Test/badge.svg?branch=master
 
 [licence-image]: https://img.shields.io/badge/license-MIT-blue.svg
